@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пикник Эко-парк</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <!-- Навбар -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div class="logo-box">
+                <div class="logo-icon">🏕️</div>
+            </div>
+            <div class="logo-text">
+                <span class="logo-main">ПИКНИК</span>
+                <span class="logo-sub">эко-парк</span>
+            </div>
+        </div>
+        <a href="#/login" class="btn btn-sm btn-login" id="auth-link">Вход в кабинет</a>
+    </nav>
+
+    <!-- Основной контент -->
+    <main id="app"></main>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#">Политика конфиденциальности</a>
+            <a href="#">Публичная оферта</a>
+        </div>
+        <div class="footer-socials">
+            <a href="#">VK</a>
+            <a href="#">TG</a>
+        </div>
+    </footer>
+
+    <!-- Скрипты -->
+    <script src="/static/js/utils/cookies.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/components/cottageCard.js"></script>
+    <script src="/static/js/components/bookingForm.js"></script>
+    <script src="/static/js/pages/home.js"></script>
+    <script src="/static/js/pages/auth.js"></script>
+    <script src="/static/js/pages/cabinet.js"></script>
+    <script src="/static/js/pages/booking.js"></script>
+    <script src="/static/js/pages/cottageDetail.js"></script>
+    <script src="/static/js/router.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

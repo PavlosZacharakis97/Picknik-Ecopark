@@ -1,0 +1,189 @@
+/* ========== HERO HEADER ========== */
+.hero-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    gap: 40px;
+}
+
+.hero-title {
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.2;
+}
+
+.hero-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--bg-card);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: 320px;
+    font-size: 14px;
+    color: var(--text-light);
+    line-height: 1.5;
+}
+
+.hero-hint-icon {
+    width: 24px;
+    height: 24px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+/* ========== MAP ========== */
+.map-section {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 40px;
+    margin-bottom: 48px;
+    box-shadow: var(--shadow);
+}
+
+.map-container {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: #e8f0e8;
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+/* SVG Map styling */
+.map-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.map-path {
+    fill: none;
+    stroke: #d4c4b0;
+    stroke-width: 8;
+    stroke-linecap: round;
+}
+
+.map-tree {
+    fill: #a8c4a8;
+    opacity: 0.6;
+}
+
+.map-tree-dark {
+    fill: #8ab08a;
+    opacity: 0.7;
+}
+
+.cottage-marker {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.cottage-marker:hover {
+    transform: scale(1.05);
+}
+
+.cottage-marker-rect {
+    fill: #f5e6d3;
+    stroke: #d4a574;
+    stroke-width: 2;
+    rx: 12;
+}
+
+.cottage-marker:hover .cottage-marker-rect {
+    fill: #fff0e0;
+}
+
+.cottage-number {
+    fill: #5a7e5e;
+    font-size: 14px;
+    font-weight: 700;
+    text-anchor: middle;
+}
+
+.cottage-plus {
+    fill: #7a9e7e;
+    font-size: 20px;
+    text-anchor: middle;
+}
+
+.map-tooltip {
+    position: absolute;
+    background: white;
+    padding: 12px 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+    font-size: 14px;
+}
+
+.cottage-marker:hover + .map-tooltip {
+    opacity: 1;
+}
+
+/* ========== EVENT CARD ========== */
+.event-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 48px;
+}
+
+.event-image {
+    background: linear-gradient(135deg, #e8f0e8, #d4e5d4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    position: relative;
+}
+
+.event-illustration {
+    font-size: 120px;
+}
+
+.event-content {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.event-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text);
+}
+
+.event-description {
+    color: var(--text-light);
+    line-height: 1.7;
+    margin-bottom: 24px;
+}
+
+.event-date {
+    color: var(--text-light);
+    font-size: 14px;
+    margin-top: auto;
+}
+
+/* ========== COTTAGES GRID ========== */
+.section-header {
+    display: flex;
+   

@@ -1,0 +1,19 @@
+@media (max-width: 768px) {
+    .container {
+        padding: 0 16px;
+    }
+    
+    main {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 24px 16px;
+    }
+    
+    .cottage-image {
+        height: 160px;
+    }
+}

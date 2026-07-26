@@ -1,0 +1,36 @@
+.cottages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+}
+
+.cabinet-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 32px;
+}
+
+.booking-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.booking-form-grid .full {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+    .cottages-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .cabinet-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .booking-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
