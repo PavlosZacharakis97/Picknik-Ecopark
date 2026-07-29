@@ -17,7 +17,7 @@ function bookingForm(cottageId, pricePerNight) {
                        onchange="calcPrice(${cottageId}, ${pricePerNight})">
             </div>
             <div class="form-group">
-                <label>Гостей</label>
+                <label>Гостей-Lohov</label>
                 <select name="guests" onchange="calcPrice(${cottageId}, ${pricePerNight})">
                     ${[1, 2, 3, 4, 5, 6, 7, 8]
                       .map(
