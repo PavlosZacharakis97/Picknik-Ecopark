@@ -41,12 +41,76 @@
     color: var(--text-light);
 }
 
+.phone-step {
+    background: rgba(122, 158, 126, 0.06);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.phone-step .phone-row {
+    display: flex;
+    gap: 8px;
+}
+
+.phone-step .phone-row input[type="tel"] {
+    flex: 1;
+}
+
+.code-inputs {
+    display: flex;
+    gap: 10px;
+    margin: 12px 0;
+}
+
+.code-inputs input {
+    width: 48px;
+    height: 48px;
+    text-align: center;
+    font-size: 20px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.payment-icons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text-light);
+}
+
+.payment-icons .icon-badge {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+}
+
+.balance-usage {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.balance-usage input[type="number"] {
+    width: 120px;
+}
+
 @media (max-width: 768px) {
     .booking-layout {
         grid-template-columns: 1fr;
     }
-    
+
     .booking-image {
         height: 200px;
+    }
+
+    .code-inputs input {
+        width: 40px;
+        height: 40px;
     }
 }
