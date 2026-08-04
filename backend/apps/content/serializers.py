@@ -6,4 +6,4 @@ from .models import Tip
 class TipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tip
-        fields = ['id', 'title', 'body', 'tags', 'order']
+        fields = ['id', 'title', 'body', 'image', 'tags', 'order']
