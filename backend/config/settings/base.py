@@ -22,6 +22,9 @@ INSTALLED_APPS = [
     'apps.core',
     'apps.users',
     'apps.bookings',
+    'apps.wallet',
+    'apps.tasks',
+    'apps.content',
 ]
 
 MIDDLEWARE = [
