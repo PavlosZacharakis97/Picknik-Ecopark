@@ -20,7 +20,7 @@ from .serializers import (
     CottageSerializer, CottageListSerializer, BookingSerializer,
     BookingCreateSerializer, PriceCalculationSerializer, ReviewSerializer
 )
-from .services import calculate_booking_price
+from .services import calculate_booking_price, find_referrer
 
 REFERRAL_BOOKING_COMMISSION_RATE = 0.15
 
@@ -122,6 +122,12 @@ def booking_create(request):
         price = calculate_booking_price(cottage, check_in, check_out, guests, promo_code)
     except ValueError as err:
         return Response({'error': str(err)}, status=400)
+
+    if not user.referred_by:
+        referrer = find_referrer(promo_code)
+        if referrer and referrer.pk != user.pk:
+            user.referred_by = referrer
+            user.save(update_fields=['referred_by'])
 
     total_price = price['total_price']
     balance_amount_used = min(float(data.get('balance_amount_used') or 0), float(user.balance), total_price)

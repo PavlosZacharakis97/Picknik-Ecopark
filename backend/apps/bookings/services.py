@@ -9,6 +9,13 @@ PROMO_DISCOUNTS = {
 REFERRAL_PROMO_DISCOUNT = 0.10
 
 
+def find_referrer(promo_code):
+    promo_code = (promo_code or '').upper()
+    if not promo_code:
+        return None
+    return User.objects.filter(referral_code=promo_code).first()
+
+
 def calculate_booking_price(cottage, check_in, check_out, guests, promo_code=''):
     if check_out <= check_in:
         raise ValueError('Дата выезда должна быть позже даты заезда')
@@ -17,10 +24,10 @@ def calculate_booking_price(cottage, check_in, check_out, guests, promo_code='')
     total = float(cottage.price_per_night) * nights * guests
 
     discount = 0
-    promo_code = (promo_code or '').upper()
-    if promo_code in PROMO_DISCOUNTS:
-        discount = total * PROMO_DISCOUNTS[promo_code]
-    elif promo_code and User.objects.filter(referral_code=promo_code).exists():
+    promo_code_upper = (promo_code or '').upper()
+    if promo_code_upper in PROMO_DISCOUNTS:
+        discount = total * PROMO_DISCOUNTS[promo_code_upper]
+    elif find_referrer(promo_code):
         discount = total * REFERRAL_PROMO_DISCOUNT
 
     final_price = total - discount
