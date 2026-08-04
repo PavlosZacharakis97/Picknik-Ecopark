@@ -18,7 +18,7 @@ function tipCardContent(tip) {
 
   return `
         <div class="tips-carousel-layout">
-            <div class="tip-image">💡</div>
+            <div class="tip-image"><img src="${tip.image || "/static/assets/images/illustration-tip-waiter.png"}" alt=""></div>
             <div>
                 <div class="tip-tags">
                     ${tags.map((t) => `<span class="tip-tag">#${t}</span>`).join("")}
