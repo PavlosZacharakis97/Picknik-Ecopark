@@ -98,9 +98,21 @@ function showCottagePopup(event, cottageId) {
     const markerRect = marker.getBoundingClientRect();
     const mapRect = mapArea.getBoundingClientRect();
 
-    popup.style.left = `${markerRect.left - mapRect.left + marker.offsetWidth + 12}px`;
-    popup.style.top = `${markerRect.top - mapRect.top}px`;
     popup.style.display = 'block';
+    const popupWidth = popup.offsetWidth;
+    const popupHeight = popup.offsetHeight;
+
+    let left = markerRect.left - mapRect.left + marker.offsetWidth + 12;
+    if (left + popupWidth > mapRect.width) {
+        left = markerRect.left - mapRect.left - popupWidth - 12;
+    }
+    left = Math.max(8, Math.min(left, mapRect.width - popupWidth - 8));
+
+    let top = markerRect.top - mapRect.top;
+    top = Math.max(8, Math.min(top, mapRect.height - popupHeight - 8));
+
+    popup.style.left = `${left}px`;
+    popup.style.top = `${top}px`;
 }
 
 function closeCottagePopup() {
