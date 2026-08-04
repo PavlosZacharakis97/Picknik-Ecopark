@@ -127,33 +127,41 @@ async function renderCabinetBalance() {
   const balance = parseFloat(profile.balance) || 0;
 
   return `
-        <h2 style="margin-bottom:8px;">Баланс</h2>
-        <div style="font-size:36px;font-weight:700;color:var(--primary);margin-bottom:24px;">${balance.toLocaleString()} руб</div>
-        <p style="color:var(--text-light);margin-bottom:24px;">
-            Обработка заявки на вывод занимает до двух рабочих дней. Минимальная сумма при выводе — 500 руб. Комиссия при выводе — 10%.
-        </p>
-        <div class="form-group">
-            <label>Платёжные данные</label>
-            <div>💳 **** **** **** ${profile.payout_card_last4 || "----"}</div>
+        <div style="display:grid;grid-template-columns:1fr 220px;gap:32px;">
+            <div>
+                <h2 style="margin-bottom:8px;">Баланс</h2>
+                <div style="font-size:36px;font-weight:700;color:var(--primary);margin-bottom:24px;">${balance.toLocaleString()} руб</div>
+                <p style="color:var(--text-light);margin-bottom:24px;">
+                    Обработка заявки на вывод занимает до двух рабочих дней. Минимальная сумма при выводе — 500 руб. Комиссия при выводе — 10%.
+                </p>
+                <div class="form-group">
+                    <label>Платёжные данные</label>
+                    <div>💳 **** **** **** ${profile.payout_card_last4 || "----"}</div>
+                </div>
+                <form onsubmit="handleWithdrawalSubmit(event)">
+                    <div class="form-group">
+                        <label>Способ вывода</label>
+                        <select name="method">
+                            <option value="visa" ${profile.payout_method === "visa" ? "selected" : ""}>Visa</option>
+                            <option value="mastercard" ${profile.payout_method === "mastercard" ? "selected" : ""}>Mastercard</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Последние 4 цифры карты</label>
+                        <input type="text" name="card_last4" maxlength="4" value="${profile.payout_card_last4 || ""}">
+                    </div>
+                    <div class="form-group">
+                        <label>Сумма к выводу</label>
+                        <input type="number" name="amount" min="500" max="${balance}" placeholder="0.00">
+                    </div>
+                    <button type="submit" class="btn">Подтвердить вывод</button>
+                </form>
+            </div>
+            <div>
+                <img src="/static/assets/images/illustration-balance.png" alt="" style="width:100%;">
+                <p style="color:var(--text-light);font-size:13px;margin-top:8px;">Вы можете использовать средства с баланса частично или полностью для бронирования домиков</p>
+            </div>
         </div>
-        <form onsubmit="handleWithdrawalSubmit(event)">
-            <div class="form-group">
-                <label>Способ вывода</label>
-                <select name="method">
-                    <option value="visa" ${profile.payout_method === "visa" ? "selected" : ""}>Visa</option>
-                    <option value="mastercard" ${profile.payout_method === "mastercard" ? "selected" : ""}>Mastercard</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Последние 4 цифры карты</label>
-                <input type="text" name="card_last4" maxlength="4" value="${profile.payout_card_last4 || ""}">
-            </div>
-            <div class="form-group">
-                <label>Сумма к выводу</label>
-                <input type="number" name="amount" min="500" max="${balance}" placeholder="0.00">
-            </div>
-            <button type="submit" class="btn">Подтвердить вывод</button>
-        </form>
     `;
 }
 
@@ -174,26 +182,33 @@ async function renderCabinetReferrals() {
   const link = `${window.location.origin}${window.location.pathname}#/register?ref=${info.referral_code}`;
 
   return `
-        <h2 style="margin-bottom:8px;">Реферальная ссылка</h2>
-        <p style="color:var(--text-light);margin-bottom:16px;">Получайте 15% от каждой оплаты бронирования клиентов, которые пришли по вашей реферальной ссылке. 25% от каждого выполненного задания клиентом.</p>
-        <div style="display:flex;gap:12px;margin-bottom:32px;">
-            <input type="text" readonly value="${link}" style="flex:1;">
-            <button class="btn btn-outline" onclick="handleCopyReferralLink('${link}')">Копировать</button>
-        </div>
-        <h2 style="margin-bottom:8px;">Промокод для привлечения</h2>
-        <p style="color:var(--text-light);margin-bottom:16px;">Промокод даёт одноразовую скидку 10% на услуги бронирования домиков.</p>
-        <div style="display:flex;gap:12px;margin-bottom:32px;">
-            <input type="text" readonly value="${info.referral_code}" style="flex:1;">
-            <button class="btn btn-outline" onclick="handleCopyReferralLink('${info.referral_code}')">Копировать</button>
-        </div>
-        <div style="display:flex;gap:32px;">
+        <div style="display:grid;grid-template-columns:1fr 220px;gap:32px;">
             <div>
-                <div style="font-size:24px;font-weight:700;">${info.referrals_count}</div>
-                <div style="color:var(--text-light);font-size:13px;">Привлечено клиентов</div>
+                <h2 style="margin-bottom:8px;">Реферальная ссылка</h2>
+                <p style="color:var(--text-light);margin-bottom:16px;">Получайте 15% от каждой оплаты бронирования клиентов, которые пришли по вашей реферальной ссылке. 25% от каждого выполненного задания клиентом.</p>
+                <div style="display:flex;gap:12px;margin-bottom:32px;">
+                    <input type="text" readonly value="${link}" style="flex:1;">
+                    <button class="btn btn-outline" onclick="handleCopyReferralLink('${link}')">Копировать</button>
+                </div>
+                <h2 style="margin-bottom:8px;">Промокод для привлечения</h2>
+                <p style="color:var(--text-light);margin-bottom:16px;">Промокод даёт одноразовую скидку 10% на услуги бронирования домиков.</p>
+                <div style="display:flex;gap:12px;margin-bottom:32px;">
+                    <input type="text" readonly value="${info.referral_code}" style="flex:1;">
+                    <button class="btn btn-outline" onclick="handleCopyReferralLink('${info.referral_code}')">Копировать</button>
+                </div>
+                <div style="display:flex;gap:32px;">
+                    <div>
+                        <div style="font-size:24px;font-weight:700;">${info.referrals_count}</div>
+                        <div style="color:var(--text-light);font-size:13px;">Привлечено клиентов</div>
+                    </div>
+                    <div>
+                        <div style="font-size:24px;font-weight:700;">${parseFloat(info.total_earned).toLocaleString()} руб</div>
+                        <div style="color:var(--text-light);font-size:13px;">Заработано</div>
+                    </div>
+                </div>
             </div>
             <div>
-                <div style="font-size:24px;font-weight:700;">${parseFloat(info.total_earned).toLocaleString()} руб</div>
-                <div style="color:var(--text-light);font-size:13px;">Заработано</div>
+                <img src="/static/assets/images/illustration-referral.png" alt="" style="width:100%;">
             </div>
         </div>
     `;
