@@ -27,6 +27,7 @@ def register(request):
     serializer = UserRegisterSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         # Отправка приветственного письма (console backend)
         from django.core.mail import send_mail
         from django.conf import settings
