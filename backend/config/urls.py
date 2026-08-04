@@ -8,6 +8,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('apps.users.urls')),
     path('api/', include('apps.bookings.urls')),
+    path('api/wallet/', include('apps.wallet.urls')),
+    path('api/tasks/', include('apps.tasks.urls')),
+    path('api/content/', include('apps.content.urls')),
     path('', TemplateView.as_view(template_name='index.html'), name='spa'),
 ]
 
