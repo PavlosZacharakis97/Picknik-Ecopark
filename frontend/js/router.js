@@ -8,6 +8,8 @@ const routes = {
     '/cabinet/bookings': () => renderCabinet('bookings'),
     '/cabinet/balance': () => renderCabinet('balance'),
     '/cabinet/referrals': () => renderCabinet('referrals'),
+    '/cabinet/transactions': () => renderCabinet('transactions'),
+    '/cabinet/tasks': () => renderCabinet('tasks'),
     '/booking/:id': (params) => renderBooking(params.id),
     '/cottages/:id': (params) => renderCottageDetail(params.id),
 };
@@ -56,7 +58,7 @@ function render() {
         return;
     }
 
-    if (path.startsWith('/cabinet') || path.startsWith('/booking')) {
+    if (path.startsWith('/cabinet')) {
         const user = getStorage('user');
         if (!user) {
             navigate('/login');
