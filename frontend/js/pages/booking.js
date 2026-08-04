@@ -2,7 +2,11 @@ async function renderBooking(id) {
     try {
         const cottage = await getCottage(id);
         addRecentCottage(cottage.id);
-        
+
+        const storedUser = getStorage('user');
+        const isGuest = !storedUser;
+        const userBalance = storedUser ? await authProfile().then(p => parseFloat(p.balance) || 0).catch(() => 0) : 0;
+
         return `
             <div class="container">
                 <div class="booking-section">
@@ -28,7 +32,7 @@ async function renderBooking(id) {
                             <div class="cottage-price" style="font-size:24px;margin-bottom:16px;">
                                 ${cottage.price_per_night.toLocaleString()} Kč<span style="font-size:14px;color:var(--text-light);"> / ночь</span>
                             </div>
-                            ${bookingForm(cottage.id, cottage.price_per_night)}
+                            ${bookingForm(cottage.id, cottage.price_per_night, isGuest, userBalance)}
                         </div>
                     </div>
                 </div>
