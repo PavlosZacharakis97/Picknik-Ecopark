@@ -41,6 +41,18 @@ function authProfile() {
     return apiRequest('/auth/profile/');
 }
 
+function updateProfile(data) {
+    return apiRequest('/auth/profile/', { method: 'PATCH', body: JSON.stringify(data) });
+}
+
+function sendPhoneCode(data) {
+    return apiRequest('/auth/phone/send-code/', { method: 'POST', body: JSON.stringify(data) });
+}
+
+function verifyPhoneCode(data) {
+    return apiRequest('/auth/phone/verify-code/', { method: 'POST', body: JSON.stringify(data) });
+}
+
 // апи домиков
 function getCottages() {
     return apiRequest('/cottages/');
@@ -70,4 +82,45 @@ function cancelBooking(id) {
 // апи погоды
 function getWeather(lat = 55.7558, lon = 37.6173) {
     return apiRequest(`/weather/?lat=${lat}&lon=${lon}`);
+}
+
+// апи кошелька
+function getReferralInfo() {
+    return apiRequest('/wallet/referral/');
+}
+
+function getTransactions(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    return apiRequest(`/wallet/transactions/${query ? '?' + query : ''}`);
+}
+
+function transactionsExportUrl(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    return `${API_BASE}/wallet/transactions/export/${query ? '?' + query : ''}`;
+}
+
+function createWithdrawal(data) {
+    return apiRequest('/wallet/withdrawals/create/', { method: 'POST', body: JSON.stringify(data) });
+}
+
+function getWithdrawals() {
+    return apiRequest('/wallet/withdrawals/');
+}
+
+// апи заданий
+function getTasks() {
+    return apiRequest('/tasks/');
+}
+
+function createTaskSubmission(data) {
+    return apiRequest('/tasks/submissions/create/', { method: 'POST', body: JSON.stringify(data) });
+}
+
+function getTaskSubmissions() {
+    return apiRequest('/tasks/submissions/');
+}
+
+// апи советов
+function getTips() {
+    return apiRequest('/content/tips/');
 }
