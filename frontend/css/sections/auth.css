@@ -27,6 +27,17 @@
     font-size: 80px;
 }
 
+.auth-image.has-illustration {
+    background: var(--bg);
+    padding: 32px;
+}
+
+.auth-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
 .auth-toggle {
     text-align: center;
     margin-top: 20px;

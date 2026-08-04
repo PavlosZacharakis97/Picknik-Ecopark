@@ -4,7 +4,9 @@ function renderAuth(mode) {
     return `
         <div class="auth-section">
             <div class="auth-layout">
-                <div class="auth-image">${isLogin ? '🔑' : '🏡'}</div>
+                <div class="auth-image ${isLogin ? 'has-illustration' : ''}">
+                    ${isLogin ? '<img src="/static/assets/images/illustration-login.png" alt="">' : '🏡'}
+                </div>
                 <div class="form-container">
                     <h2 class="form-title">${isLogin ? 'Вход в кабинет' : 'Регистрация'}</h2>
                     <p class="form-subtitle">${isLogin ? 'Войдите в личный кабинет по email и паролю' : 'Создайте аккаунт для бронирования'}</p>
