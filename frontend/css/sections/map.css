@@ -10,7 +10,7 @@
 .map-area {
     width: 100%;
     height: 450px;
-    background: linear-gradient(135deg, #e8f0e8 0%, #d4e5d4 100%);
+    background: url('/static/assets/images/map-bg.jpeg') center center / cover no-repeat;
     border-radius: var(--radius);
     position: relative;
     overflow: hidden;
@@ -18,26 +18,28 @@
 
 .cottage-marker {
     position: absolute;
-    width: 64px;
-    height: 64px;
-    background: var(--bg-card);
-    border: 3px solid var(--primary);
-    border-radius: 16px;
+    width: 36px;
+    height: 36px;
+    margin-left: -18px;
+    margin-top: -18px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 2px solid var(--primary);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: var(--transition);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .cottage-marker:hover {
-    transform: scale(1.1);
+    transform: scale(1.15);
     background: var(--primary);
 }
 
 .cottage-marker .number {
-    font-size: 20px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--primary);
 }
