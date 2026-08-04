@@ -13,7 +13,7 @@ async function renderBooking(id) {
                     <h1>Бронирование: ${cottage.name}</h1>
                     <div class="booking-layout" style="margin-top:32px;">
                         <div>
-                            <div class="booking-image">🏡</div>
+                            <div class="booking-image"><img src="/static/assets/images/illustration-booking.png" alt=""></div>
                             <div style="margin-top:20px;">
                                 <h3>${cottage.name}</h3>
                                 <p style="color:var(--text-light);">${cottage.description}</p>
