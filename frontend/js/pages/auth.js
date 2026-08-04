@@ -4,10 +4,10 @@ function renderAuth(mode) {
     return `
         <div class="auth-section">
             <div class="auth-layout">
-                <div class="auth-image">🏡</div>
+                <div class="auth-image">${isLogin ? '🔑' : '🏡'}</div>
                 <div class="form-container">
-                    <h2 class="form-title">${isLogin ? 'Вход' : 'Регистрация'}</h2>
-                    <p class="form-subtitle">${isLogin ? 'С возвращением!' : 'Создайте аккаунт для бронирования'}</p>
+                    <h2 class="form-title">${isLogin ? 'Вход в кабинет' : 'Регистрация'}</h2>
+                    <p class="form-subtitle">${isLogin ? 'Войдите в личный кабинет по email и паролю' : 'Создайте аккаунт для бронирования'}</p>
                     
                     <form onsubmit="handleAuthSubmit(event, '${mode}')">
                         ${!isLogin ? `
@@ -41,7 +41,7 @@ function renderAuth(mode) {
                         </div>
                         
                         <button type="submit" class="btn btn-block">
-                            ${isLogin ? 'Войти' : 'Зарегистрироваться'}
+                            ${isLogin ? 'Войти в кабинет' : 'Зарегистрироваться'}
                         </button>
                     </form>
                     
