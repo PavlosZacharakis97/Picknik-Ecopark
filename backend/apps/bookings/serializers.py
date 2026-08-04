@@ -1,17 +1,31 @@
+from django.utils import timezone
 from rest_framework import serializers
 from .models import Cottage, Booking, Review
 
+ACTIVE_BOOKING_STATUSES = ['pending', 'confirmed', 'paid']
 
-class CottageSerializer(serializers.ModelSerializer):
+
+class OccupiedUntilMixin(serializers.Serializer):
+    occupied_until = serializers.SerializerMethodField()
+
+    def get_occupied_until(self, obj):
+        booking = obj.bookings.filter(
+            status__in=ACTIVE_BOOKING_STATUSES,
+            check_out__gte=timezone.now().date(),
+        ).order_by('check_out').first()
+        return booking.check_out if booking else None
+
+
+class CottageSerializer(OccupiedUntilMixin, serializers.ModelSerializer):
     class Meta:
         model = Cottage
         fields = '__all__'
 
 
-class CottageListSerializer(serializers.ModelSerializer):
+class CottageListSerializer(OccupiedUntilMixin, serializers.ModelSerializer):
     class Meta:
         model = Cottage
-        fields = ['id', 'number', 'name', 'cottage_type', 'price_per_night', 'max_guests', 'image', 'is_active', 'latitude', 'longitude']
+        fields = ['id', 'number', 'name', 'cottage_type', 'price_per_night', 'max_guests', 'image', 'is_active', 'latitude', 'longitude', 'occupied_until']
 
 
 class BookingSerializer(serializers.ModelSerializer):
@@ -25,9 +39,20 @@ class BookingSerializer(serializers.ModelSerializer):
 
 
 class BookingCreateSerializer(serializers.ModelSerializer):
+    phone_number = serializers.CharField(required=False, allow_blank=True)
+    verification_code = serializers.CharField(required=False, allow_blank=True)
+    balance_amount_used = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, default=0)
+
     class Meta:
         model = Booking
-        fields = ['cottage', 'check_in', 'check_out', 'guests', 'promo_code', 'notes']
+        fields = ['cottage', 'check_in', 'check_out', 'guests', 'promo_code', 'notes', 'phone_number', 'verification_code', 'balance_amount_used']
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        is_authenticated = bool(request and request.user and request.user.is_authenticated)
+        if not is_authenticated and not (attrs.get('phone_number') and attrs.get('verification_code')):
+            raise serializers.ValidationError('Для бронирования без входа укажите телефон и код подтверждения')
+        return attrs
 
 
 class PriceCalculationSerializer(serializers.Serializer):
