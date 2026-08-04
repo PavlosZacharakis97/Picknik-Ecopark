@@ -58,11 +58,11 @@ function weatherWidget(w) {
 
 function cottageMarker(c) {
     const positions = [
-        { left: '20%', top: '30%' },
-        { left: '55%', top: '25%' },
-        { left: '75%', top: '50%' },
-        { left: '35%', top: '65%' },
-        { left: '60%', top: '70%' },
+        { left: '26%', top: '27%' },
+        { left: '39%', top: '40%' },
+        { left: '51%', top: '58%' },
+        { left: '60%', top: '65%' },
+        { left: '71%', top: '40%' },
     ];
     const pos = positions[(c.number - 1) % positions.length];
 
