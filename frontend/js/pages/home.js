@@ -67,10 +67,12 @@ function cottageMarker(c) {
     const pos = positions[(c.number - 1) % positions.length];
 
     return `
-        <div class="cottage-marker"
+        <div class="cottage-hotspot"
              style="left:${pos.left};top:${pos.top};"
              onclick="showCottagePopup(event, ${c.id})">
-            <span class="number">${c.number}</span>
+            <div class="cottage-marker">
+                <span class="number">${c.number}</span>
+            </div>
         </div>
     `;
 }

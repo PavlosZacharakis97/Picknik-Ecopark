@@ -16,24 +16,32 @@
     overflow: hidden;
 }
 
-.cottage-marker {
+.cottage-hotspot {
     position: absolute;
+    width: 90px;
+    height: 90px;
+    margin-left: -45px;
+    margin-top: -45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.cottage-marker {
     width: 36px;
     height: 36px;
-    margin-left: -18px;
-    margin-top: -18px;
     background: rgba(255, 255, 255, 0.85);
     border: 2px solid var(--primary);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
     transition: var(--transition);
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-.cottage-marker:hover {
+.cottage-hotspot:hover .cottage-marker {
     transform: scale(1.15);
     background: var(--primary);
 }
@@ -44,7 +52,7 @@
     color: var(--primary);
 }
 
-.cottage-marker:hover .number {
+.cottage-hotspot:hover .cottage-marker .number {
     color: white;
 }
 
