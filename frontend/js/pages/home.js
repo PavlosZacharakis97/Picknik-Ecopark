@@ -1,14 +1,17 @@
+let cachedCottages = [];
+
 async function renderHome() {
     try {
         const [cottages, weather] = await Promise.all([
             getCottages(),
             getWeather().catch(() => null)
         ]);
+        cachedCottages = cottages;
 
         return `
             <div class="container">
                 ${weather ? weatherWidget(weather) : ''}
-                
+
                 <div class="hero">
                     <h1>Аренда домиков в экопарке</h1>
                     <p>Уютные коттеджи среди природы. Идеальное место для отдыха с семьёй или друзьями.</p>
@@ -17,6 +20,7 @@ async function renderHome() {
                 <div class="map-container">
                     <div class="map-area" id="map">
                         ${cottages.map(c => cottageMarker(c)).join('')}
+                        <div id="map-popup" class="map-popup" style="display:none;"></div>
                     </div>
                 </div>
 
@@ -61,15 +65,50 @@ function cottageMarker(c) {
         { left: '60%', top: '70%' },
     ];
     const pos = positions[(c.number - 1) % positions.length];
-    
+
     return `
-        <div class="cottage-marker" 
+        <div class="cottage-marker"
              style="left:${pos.left};top:${pos.top};"
-             onclick="navigate('/cottages/${c.id}')">
+             onclick="showCottagePopup(event, ${c.id})">
             <span class="number">${c.number}</span>
-            <div class="tooltip">${c.name}<br>${c.price_per_night.toLocaleString()} Kč/ночь</div>
         </div>
     `;
+}
+
+function showCottagePopup(event, cottageId) {
+    const cottage = cachedCottages.find(c => c.id === cottageId);
+    const popup = document.getElementById('map-popup');
+    if (!cottage || !popup) return;
+
+    const occupiedText = cottage.occupied_until
+        ? `аренда до ${formatOccupiedDate(cottage.occupied_until)}`
+        : 'свободен';
+
+    popup.innerHTML = `
+        <button class="popup-close" onclick="closeCottagePopup()">&times;</button>
+        <h4>Домик № ${cottage.number}</h4>
+        <p>${occupiedText}</p>
+        <button class="btn" onclick="navigate('/booking/${cottage.id}')">Бронировать домик</button>
+    `;
+
+    const marker = event.currentTarget;
+    const mapArea = marker.closest('.map-area');
+    const markerRect = marker.getBoundingClientRect();
+    const mapRect = mapArea.getBoundingClientRect();
+
+    popup.style.left = `${markerRect.left - mapRect.left + marker.offsetWidth + 12}px`;
+    popup.style.top = `${markerRect.top - mapRect.top}px`;
+    popup.style.display = 'block';
+}
+
+function closeCottagePopup() {
+    const popup = document.getElementById('map-popup');
+    if (popup) popup.style.display = 'none';
+}
+
+function formatOccupiedDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('ru-RU');
 }
 
 function filterCottages(type) {
