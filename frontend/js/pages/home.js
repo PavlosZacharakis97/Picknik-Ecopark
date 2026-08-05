@@ -131,7 +131,6 @@ function filterCottages(type) {
     
     const cards = document.querySelectorAll('.cottage-card');
     cards.forEach(card => {
-        const cardType = card.querySelector('.cottage-type').textContent.toLowerCase();
-        card.style.display = (type === 'all' || cardType.includes(type)) ? 'block' : 'none';
+        card.style.display = (type === 'all' || card.dataset.type === type) ? 'block' : 'none';
     });
 }

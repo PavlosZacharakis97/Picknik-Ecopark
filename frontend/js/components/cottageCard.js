@@ -1,7 +1,7 @@
 function cottageCard(cottage) {
   const isFav = isFavorite(cottage.id);
   return `
-        <div class="cottage-card">
+        <div class="cottage-card" data-type="${cottage.cottage_type}">
             <div class="cottage-image">
                 🏡
                 <button class="fav-btn ${isFav ? "active" : ""}" 
