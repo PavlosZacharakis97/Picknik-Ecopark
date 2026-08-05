@@ -55,13 +55,13 @@ async function renderHome() {
                     <div class="location-text">
                         <h2 class="section-title">Как нас найти</h2>
                         <p>Экопарк расположен в живописном месте среди леса — удобно добраться на машине или общественным транспортом.</p>
-                        <a href="https://www.google.com/maps?q=55.7558,37.6173" target="_blank" rel="noopener" class="btn btn-outline">Проложить маршрут</a>
+                        <a href="https://www.google.com/maps?q=41.622706,42.308329" target="_blank" rel="noopener" class="btn btn-outline">Проложить маршрут</a>
                     </div>
                     <div class="location-map">
                         <iframe
-                            src="https://maps.google.com/maps?q=55.7558,37.6173&z=13&output=embed"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11236.260098744568!2d42.30832853618791!3d41.622706124879564!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x405d4f1db99b6809%3A0x5772bb1ce79a3b51!2sGlamping%20Tago!5e1!3m2!1sru!2scz!4v1785933642022!5m2!1sru!2scz"
                             width="100%" height="360" style="border:0;" allowfullscreen loading="lazy"
-                            referrerpolicy="no-referrer-when-downgrade" title="Карта проезда к экопарку"></iframe>
+                            referrerpolicy="strict-origin-when-cross-origin" title="Карта проезда к экопарку"></iframe>
                     </div>
                 </section>
             </div>
