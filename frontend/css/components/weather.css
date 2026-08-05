@@ -1,35 +1,41 @@
 .weather-widget {
-    background: linear-gradient(135deg, #a8d5ba, #7a9e7e);
-    color: white;
-    padding: 24px;
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: var(--text);
+    padding: 18px 24px;
     border-radius: var(--radius);
-    margin-bottom: 32px;
+    margin: 0 auto;
+    max-width: 380px;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
     box-shadow: var(--shadow);
 }
 
 .weather-icon {
-    font-size: 48px;
+    font-size: 40px;
     line-height: 1;
 }
 
 .weather-info h3 {
-    font-size: 18px;
-    margin-bottom: 4px;
+    font-size: 15px;
+    margin-bottom: 2px;
     font-weight: 600;
+    color: var(--text);
 }
 
 .weather-info p {
-    font-size: 14px;
-    opacity: 0.9;
+    font-size: 13px;
+    color: var(--text-light);
 }
 
 .weather-temp {
-    font-size: 36px;
+    font-size: 28px;
     font-weight: 700;
     margin-left: auto;
+    color: var(--primary-dark);
 }
 
 @media (max-width: 768px) {
@@ -37,7 +43,7 @@
         flex-direction: column;
         text-align: center;
     }
-    
+
     .weather-temp {
         margin-left: 0;
     }

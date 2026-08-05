@@ -39,7 +39,7 @@ async function renderCottageDetail(id) {
                             </div>
                             <p style="color:var(--text-light);margin-bottom:24px;">за ночь</p>
                             <a href="#/booking/${cottage.id}" class="btn btn-block btn-lg">Забронировать</a>
-                            <button onclick="toggleFav(${cottage.id});render();" class="btn btn-outline btn-block" style="margin-top:12px;">
+                            <button onclick="toggleFavoriteButton(event, ${cottage.id})" class="btn btn-outline btn-block" style="margin-top:12px;">
                                 ${isFavorite(cottage.id) ? '❤️ В избранном' : '🤍 Добавить в избранное'}
                             </button>
                         </div>
@@ -50,4 +50,11 @@ async function renderCottageDetail(id) {
     } catch (err) {
         return renderError(err.message);
     }
+}
+
+function toggleFavoriteButton(event, id) {
+    event.preventDefault();
+    toggleFavorite(id);
+    const btn = event.currentTarget;
+    btn.textContent = isFavorite(id) ? '❤️ В избранном' : '🤍 Добавить в избранное';
 }

@@ -4,20 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Пикник Эко-парк</title>
-    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/base/reset.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/base/variables.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/mixins/utilities.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/components/buttons.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/components/forms.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/components/cards.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/components/navbar.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/components/footer.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/components/alerts.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/components/loading.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/components/weather.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/layout/grid.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/layout/responsive.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/sections/hero.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/sections/map.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/sections/cottages.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/sections/booking.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/sections/cabinet.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/sections/auth.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/sections/tips.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/sections/notfound.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/sections/location.css?v={% now 'U' %}">
 </head>
 <body>
     <!-- Навбар -->
     <nav class="navbar">
-        <div class="nav-brand">
-            <div class="logo-box">
-                <div class="logo-icon">🏕️</div>
-            </div>
-            <div class="logo-text">
-                <span class="logo-main">ПИКНИК</span>
-                <span class="logo-sub">эко-парк</span>
-            </div>
-        </div>
+        <a href="#/" class="nav-brand">
+            <img src="/static/assets/images/logo.png" alt="Пикник Эко-парк" class="nav-logo-img">
+        </a>
         <a href="#/login" class="btn btn-sm btn-login" id="auth-link">Вход в кабинет</a>
     </nav>
 
@@ -31,22 +49,35 @@
             <a href="#">Публичная оферта</a>
         </div>
         <div class="footer-socials">
-            <a href="#">VK</a>
-            <a href="#">TG</a>
+            <a href="https://vk.ru/" target="_blank" rel="noopener" aria-label="VK">
+                <img src="/static/assets/images/vk.png" alt="VK">
+            </a>
+            <a href="https://web.telegram.org/a/" target="_blank" rel="noopener" aria-label="Telegram">
+                <img src="/static/assets/images/telegram.png" alt="Telegram">
+            </a>
+            <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">
+                <img src="/static/assets/images/instagram.png" alt="Instagram">
+            </a>
+            <a href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook">
+                <img src="/static/assets/images/facebook.png" alt="Facebook">
+            </a>
         </div>
     </footer>
 
     <!-- Скрипты -->
-    <script src="/static/js/utils/cookies.js"></script>
-    <script src="/static/js/api.js"></script>
-    <script src="/static/js/components/cottageCard.js"></script>
-    <script src="/static/js/components/bookingForm.js"></script>
-    <script src="/static/js/pages/home.js"></script>
-    <script src="/static/js/pages/auth.js"></script>
-    <script src="/static/js/pages/cabinet.js"></script>
-    <script src="/static/js/pages/booking.js"></script>
-    <script src="/static/js/pages/cottageDetail.js"></script>
-    <script src="/static/js/router.js"></script>
-    <script src="/static/js/app.js"></script>
+    <script src="/static/js/utils/cookies.js?v={% now 'U' %}"></script>
+    <script src="/static/js/utils/scrollReveal.js?v={% now 'U' %}"></script>
+    <script src="/static/js/api.js?v={% now 'U' %}"></script>
+    <script src="/static/js/components/cottageCard.js?v={% now 'U' %}"></script>
+    <script src="/static/js/components/bookingForm.js?v={% now 'U' %}"></script>
+    <script src="/static/js/components/cabinetSidebar.js?v={% now 'U' %}"></script>
+    <script src="/static/js/components/tipsCarousel.js?v={% now 'U' %}"></script>
+    <script src="/static/js/pages/home.js?v={% now 'U' %}"></script>
+    <script src="/static/js/pages/auth.js?v={% now 'U' %}"></script>
+    <script src="/static/js/pages/cabinet.js?v={% now 'U' %}"></script>
+    <script src="/static/js/pages/booking.js?v={% now 'U' %}"></script>
+    <script src="/static/js/pages/cottageDetail.js?v={% now 'U' %}"></script>
+    <script src="/static/js/router.js?v={% now 'U' %}"></script>
+    <script src="/static/js/app.js?v={% now 'U' %}"></script>
 </body>
 </html>

@@ -10,39 +10,49 @@
 .map-area {
     width: 100%;
     height: 450px;
-    background: linear-gradient(135deg, #e8f0e8 0%, #d4e5d4 100%);
+    background: url('/static/assets/images/map-bg.jpeg') center center / cover no-repeat;
     border-radius: var(--radius);
     position: relative;
     overflow: hidden;
 }
 
-.cottage-marker {
+.cottage-hotspot {
     position: absolute;
-    width: 64px;
-    height: 64px;
-    background: var(--bg-card);
-    border: 3px solid var(--primary);
-    border-radius: 16px;
+    width: 90px;
+    height: 90px;
+    margin-left: -45px;
+    margin-top: -45px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: var(--transition);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.cottage-marker:hover {
-    transform: scale(1.1);
+.cottage-marker {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.cottage-hotspot:hover .cottage-marker {
+    transform: scale(1.15);
     background: var(--primary);
 }
 
 .cottage-marker .number {
-    font-size: 20px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--primary);
 }
 
-.cottage-marker:hover .number {
+.cottage-hotspot:hover .cottage-marker .number {
     color: white;
 }
 
@@ -67,12 +77,51 @@
     opacity: 1;
 }
 
+.map-popup {
+    position: absolute;
+    z-index: 20;
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    padding: 20px;
+    min-width: 220px;
+}
+
+.map-popup h4 {
+    font-size: 18px;
+    margin-bottom: 4px;
+    padding-right: 16px;
+}
+
+.map-popup p {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-bottom: 16px;
+}
+
+.map-popup .popup-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text-light);
+    line-height: 1;
+}
+
 @media (max-width: 768px) {
     .map-container {
         padding: 16px;
     }
-    
+
     .map-area {
         height: 300px;
+    }
+
+    .map-popup {
+        min-width: 180px;
+        padding: 16px;
     }
 }

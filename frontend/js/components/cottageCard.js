@@ -1,12 +1,10 @@
 function cottageCard(cottage) {
   const isFav = isFavorite(cottage.id);
   return `
-        <div class="cottage-card">
+        <div class="cottage-card" data-type="${cottage.cottage_type}">
             <div class="cottage-image">
                 🏡
-                <button class="fav-btn ${isFav ? "active" : ""}" 
-                        onclick="toggleFav(${cottage.id}); event.stopPropagation();"
-                        style="position:absolute;top:12px;right:12px;background:white;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+                <button class="fav-btn ${isFav ? "active" : ""}" onclick="toggleFav(event, ${cottage.id})">
                     ${isFav ? "❤️" : "🤍"}
                 </button>
             </div>
@@ -33,7 +31,18 @@ function getCottageTypeName(type) {
   return types[type] || type;
 }
 
-function toggleFav(id) {
+function toggleFav(event, id) {
+  event.preventDefault();
+  event.stopPropagation();
+
   toggleFavorite(id);
-  render();
+
+  const btn = event.currentTarget;
+  const isFav = isFavorite(id);
+  btn.classList.toggle('active', isFav);
+  btn.textContent = isFav ? '❤️' : '🤍';
+
+  btn.classList.remove('pop');
+  void btn.offsetWidth;
+  btn.classList.add('pop');
 }

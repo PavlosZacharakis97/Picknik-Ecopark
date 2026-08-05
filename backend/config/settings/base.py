@@ -22,6 +22,9 @@ INSTALLED_APPS = [
     'apps.core',
     'apps.users',
     'apps.bookings',
+    'apps.wallet',
+    'apps.tasks',
+    'apps.content',
 ]
 
 MIDDLEWARE = [
@@ -65,7 +68,7 @@ DATABASES = {
         'USER': 'piknik_user',
         'PASSWORD': '12345',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '5433',
     }
 }
 
@@ -94,6 +97,10 @@ LOCALE_PATHS = [BASE_DIR / 'locale']
 # Static files
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'frontend']  # otdau vsiu papku kak static
+
+# Media files (загруженные картинки)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

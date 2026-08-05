@@ -1,0 +1,136 @@
+.notfound-section {
+    position: relative;
+    min-height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+    overflow: hidden;
+}
+
+.notfound-bush {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--primary-light);
+    opacity: 0.35;
+    animation: notfound-float 6s ease-in-out infinite;
+}
+
+.notfound-bush.b1 { width: 140px; height: 140px; top: 8%; left: 6%; animation-delay: 0s; }
+.notfound-bush.b2 { width: 90px; height: 90px; top: 68%; left: 10%; animation-delay: 1.2s; }
+.notfound-bush.b3 { width: 160px; height: 160px; top: 12%; right: 8%; animation-delay: 0.6s; }
+.notfound-bush.b4 { width: 100px; height: 100px; bottom: 12%; right: 14%; animation-delay: 1.8s; }
+
+@keyframes notfound-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+}
+
+.notfound-signpost {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+    margin-bottom: 16px;
+}
+
+.notfound-arrow {
+    background: var(--bg-card);
+    border: 2px solid var(--primary);
+    color: var(--text);
+    font-weight: 600;
+    font-size: 13px;
+    padding: 8px 18px;
+    margin: 3px 0;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+}
+
+.notfound-arrow.left {
+    align-self: flex-start;
+    transform: rotate(-3deg);
+}
+
+.notfound-arrow.right {
+    align-self: flex-end;
+    transform: rotate(2deg);
+    border-color: var(--accent);
+}
+
+.notfound-code {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: var(--font-heading);
+    font-size: 140px;
+    font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--primary-dark), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    z-index: 1;
+}
+
+.notfound-compass {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 6px solid var(--primary-dark);
+    position: relative;
+    animation: notfound-spin 8s linear infinite;
+    flex-shrink: 0;
+}
+
+.notfound-compass::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 34px;
+    background: var(--accent);
+    border-radius: 2px;
+    transform-origin: bottom center;
+    transform: translate(-50%, -100%) rotate(25deg);
+}
+
+@keyframes notfound-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.notfound-title {
+    margin-top: 28px;
+    font-size: 28px;
+    z-index: 1;
+}
+
+.notfound-text {
+    color: var(--text-light);
+    margin: 12px 0 32px;
+    max-width: 420px;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .notfound-code {
+        font-size: 76px;
+        gap: 6px;
+    }
+
+    .notfound-compass {
+        width: 56px;
+        height: 56px;
+        border-width: 4px;
+    }
+
+    .notfound-arrow {
+        font-size: 12px;
+        padding: 6px 14px;
+    }
+}

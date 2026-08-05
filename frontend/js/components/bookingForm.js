@@ -1,18 +1,18 @@
-function bookingForm(cottageId, pricePerNight) {
+function bookingForm(cottageId, pricePerNight, isGuest = false, userBalance = 0) {
   const draft = getBookingDraft() || {};
 
   return `
         <form class="booking-form-grid" onsubmit="handleBookingSubmit(event, ${cottageId}, ${pricePerNight})">
             <div class="form-group">
                 <label>Заезд</label>
-                <input type="date" name="check_in" required 
-                       value="${draft.checkIn || ""}" 
+                <input type="date" name="check_in" required
+                       value="${draft.checkIn || ""}"
                        min="${new Date().toISOString().split("T")[0]}"
                        onchange="calcPrice(${cottageId}, ${pricePerNight})">
             </div>
             <div class="form-group">
                 <label>Выезд</label>
-                <input type="date" name="check_out" required 
+                <input type="date" name="check_out" required
                        value="${draft.checkOut || ""}"
                        onchange="calcPrice(${cottageId}, ${pricePerNight})">
             </div>
@@ -29,10 +29,29 @@ function bookingForm(cottageId, pricePerNight) {
             </div>
             <div class="form-group">
                 <label>Промокод</label>
-                <input type="text" name="promo_code" placeholder="PIKNIK10" 
+                <input type="text" name="promo_code" placeholder="PIKNIK10"
                        value="${draft.promoCode || ""}"
                        onchange="calcPrice(${cottageId}, ${pricePerNight})">
             </div>
+            ${isGuest ? `
+            <div class="form-group full phone-step" id="phone-step">
+                <label>Номер телефона</label>
+                <div class="phone-row">
+                    <input type="tel" id="phone-input" placeholder="+7 999 123-45-67">
+                    <button type="button" class="btn btn-sm" onclick="handleSendSmsCode(event)">Отправить SMS-код</button>
+                </div>
+            </div>
+            ` : ''}
+            ${!isGuest && userBalance > 0 ? `
+            <div class="form-group full balance-usage">
+                <div>
+                    <label>Списать с баланса</label>
+                    <div style="font-size:12px;color:var(--text-light);">Доступно: ${userBalance.toLocaleString()} руб</div>
+                </div>
+                <input type="number" name="balance_amount_used" min="0" max="${userBalance}" value="0"
+                       onchange="calcPrice(${cottageId}, ${pricePerNight})">
+            </div>
+            ` : ''}
             <div class="form-group full">
                 <label>Примечания</label>
                 <textarea name="notes" rows="2" placeholder="Особые пожелания...">${draft.notes || ""}</textarea>
@@ -42,6 +61,14 @@ function bookingForm(cottageId, pricePerNight) {
                     <div class="price" id="price-total">0 Kč</div>
                     <div class="price-period">Выберите даты для расчёта</div>
                 </div>
+                ${isGuest ? `
+                <div class="payment-icons">
+                    <span>Оплата:</span>
+                    <span class="icon-badge">VISA</span>
+                    <span class="icon-badge">Mastercard</span>
+                    <span class="icon-badge">QIWI</span>
+                </div>
+                ` : ''}
             </div>
             <div class="form-group full">
                 <button type="submit" class="btn btn-block">Забронировать</button>
@@ -73,15 +100,96 @@ async function calcPrice(cottageId, pricePerNight) {
       promo_code: promo,
     });
     priceTotal.textContent = result.total_price.toLocaleString() + " Kč";
-    priceBox.querySelector(".price-period").textContent =
-      `${result.nights} ночей · ${result.guests} гостей` +
+
+    let periodText = `${result.nights} ночей · ${result.guests} гостей` +
       (result.discount > 0
         ? ` · Скидка ${result.discount.toLocaleString()} Kč`
         : "");
+
+    if (form.balance_amount_used) {
+      const used = Math.min(parseFloat(form.balance_amount_used.value) || 0, result.total_price);
+      if (used > 0) {
+        periodText += ` · С баланса: ${used.toLocaleString()} Kč · Картой: ${(result.total_price - used).toLocaleString()} Kč`;
+      }
+    }
+
+    priceBox.querySelector(".price-period").textContent = periodText;
   } catch (err) {
     priceTotal.textContent = "—";
     priceBox.querySelector(".price-period").textContent = err.message;
   }
+}
+
+async function handleSendSmsCode(event) {
+  event.preventDefault();
+  const phoneInput = document.getElementById("phone-input");
+  const phone = phoneInput.value.trim();
+  if (!phone) {
+    alert("Укажите номер телефона");
+    return;
+  }
+
+  try {
+    await sendPhoneCode({ phone_number: phone });
+    renderCodeStep(phone);
+  } catch (err) {
+    alert("❌ " + err.message);
+  }
+}
+
+function renderCodeStep(phone) {
+  const step = document.getElementById("phone-step");
+  step.innerHTML = `
+        <label>Код из SMS</label>
+        <div style="font-size:13px;color:var(--text-light);margin-bottom:8px;">Отправлен на ${phone}</div>
+        <div class="code-inputs">
+            ${[0, 1, 2, 3].map((i) => `<input type="text" maxlength="1" class="code-digit" data-index="${i}">`).join("")}
+        </div>
+        <div style="display:flex;gap:8px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="handleCancelPhoneStep()">Отмена</button>
+            <button type="button" class="btn btn-sm" onclick="handleVerifyCode(event, '${phone}')">Подтвердить</button>
+        </div>
+    `;
+
+  const digitInputs = step.querySelectorAll(".code-digit");
+  digitInputs.forEach((input, i) => {
+    input.addEventListener("input", () => {
+      if (input.value && digitInputs[i + 1]) digitInputs[i + 1].focus();
+    });
+  });
+  if (digitInputs[0]) digitInputs[0].focus();
+}
+
+async function handleVerifyCode(event, phone) {
+  event.preventDefault();
+  const digits = Array.from(document.querySelectorAll(".code-digit")).map((i) => i.value).join("");
+  if (digits.length < 4) {
+    alert("Введите код целиком");
+    return;
+  }
+
+  try {
+    await verifyPhoneCode({ phone_number: phone, code: digits });
+    const step = document.getElementById("phone-step");
+    step.innerHTML = `
+            <div class="alert alert-success" style="margin:0;">✅ Телефон подтверждён: ${phone}</div>
+            <input type="hidden" name="phone_number" value="${phone}">
+            <input type="hidden" name="verification_code" value="${digits}">
+        `;
+  } catch (err) {
+    alert("❌ " + err.message);
+  }
+}
+
+function handleCancelPhoneStep() {
+  const step = document.getElementById("phone-step");
+  step.innerHTML = `
+        <label>Номер телефона</label>
+        <div class="phone-row">
+            <input type="tel" id="phone-input" placeholder="+7 999 123-45-67">
+            <button type="button" class="btn btn-sm" onclick="handleSendSmsCode(event)">Отправить SMS-код</button>
+        </div>
+    `;
 }
 
 async function handleBookingSubmit(e, cottageId, pricePerNight) {
@@ -96,6 +204,10 @@ async function handleBookingSubmit(e, cottageId, pricePerNight) {
     notes: form.notes.value,
   };
 
+  if (form.phone_number) data.phone_number = form.phone_number.value;
+  if (form.verification_code) data.verification_code = form.verification_code.value;
+  if (form.balance_amount_used) data.balance_amount_used = parseFloat(form.balance_amount_used.value) || 0;
+
   saveBookingDraft({
     cottageId,
     checkIn: data.check_in,
@@ -108,6 +220,7 @@ async function handleBookingSubmit(e, cottageId, pricePerNight) {
   try {
     const result = await createBooking(data);
     clearBookingDraft();
+    if (result.user) setStorage("user", result.user);
     alert("✅ " + result.message);
     navigate("/cabinet/bookings");
   } catch (err) {

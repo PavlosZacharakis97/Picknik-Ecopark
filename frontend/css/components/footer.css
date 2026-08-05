@@ -23,11 +23,43 @@
     color: var(--primary);
 }
 
+.footer-socials {
+    display: flex;
+    gap: 14px;
+}
+
+.footer-socials a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--bg);
+    transition: var(--transition);
+}
+
+.footer-socials a img {
+    width: 20px;
+    height: 20px;
+}
+
+.footer-socials a:hover {
+    background: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+}
+
 @media (max-width: 768px) {
     .footer {
         flex-direction: column;
         gap: 16px;
         text-align: center;
         padding: 20px 16px;
+    }
+
+    .footer-socials {
+        justify-content: center;
+        flex-wrap: wrap;
     }
 }

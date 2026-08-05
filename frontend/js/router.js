@@ -8,6 +8,8 @@ const routes = {
     '/cabinet/bookings': () => renderCabinet('bookings'),
     '/cabinet/balance': () => renderCabinet('balance'),
     '/cabinet/referrals': () => renderCabinet('referrals'),
+    '/cabinet/transactions': () => renderCabinet('transactions'),
+    '/cabinet/tasks': () => renderCabinet('tasks'),
     '/booking/:id': (params) => renderBooking(params.id),
     '/cottages/:id': (params) => renderCottageDetail(params.id),
 };
@@ -17,7 +19,14 @@ function navigate(path) {
 }
 
 function getRoute() {
-    return window.location.hash.slice(1) || '/';
+    const hash = window.location.hash.slice(1) || '/';
+    return hash.split('?')[0];
+}
+
+function getQueryParams() {
+    const hash = window.location.hash.slice(1) || '/';
+    const queryString = hash.split('?')[1] || '';
+    return Object.fromEntries(new URLSearchParams(queryString));
 }
 
 function matchRoute(path) {
@@ -56,7 +65,7 @@ function render() {
         return;
     }
 
-    if (path.startsWith('/cabinet') || path.startsWith('/booking')) {
+    if (path.startsWith('/cabinet')) {
         const user = getStorage('user');
         if (!user) {
             navigate('/login');
@@ -69,11 +78,15 @@ function render() {
     try {
         const content = matched.handler(matched.params);
         if (content instanceof Promise) {
-            content.then(html => app.innerHTML = html).catch(err => {
+            content.then(html => {
+                app.innerHTML = html;
+                initScrollReveal();
+            }).catch(err => {
                 app.innerHTML = renderError(err.message);
             });
         } else {
             app.innerHTML = content;
+            initScrollReveal();
         }
     } catch (error) {
         console.error('Render error:', error);
@@ -137,11 +150,24 @@ async function handleLogout() {
 
 function renderNotFound() {
     return `
-        <div class="container" style="text-align:center;padding:80px 20px;">
-            <h1 style="font-size:120px;color:var(--primary);margin-bottom:20px;">404</h1>
-            <h2 style="margin-bottom:16px;">Страница не найдена</h2>
-            <p style="color:var(--text-light);margin-bottom:32px;">Похоже, вы заблудились в экопарке...</p>
-            <a href="#/" class="btn">На главную</a>
+        <div class="notfound-section">
+            <span class="notfound-bush b1"></span>
+            <span class="notfound-bush b2"></span>
+            <span class="notfound-bush b3"></span>
+            <span class="notfound-bush b4"></span>
+
+            <div class="notfound-signpost">
+                <div class="notfound-arrow left">🏡 На тропу к домикам</div>
+                <div class="notfound-arrow right">❓ Сюда вы и попали</div>
+            </div>
+
+            <div class="notfound-code">
+                4<div class="notfound-compass"></div>4
+            </div>
+
+            <h2 class="notfound-title">Кажется, вы сошли с тропы</h2>
+            <p class="notfound-text">Такой страницы в экопарке нет. Но домики, лес и уютный кабинет никуда не делись.</p>
+            <a href="#/" class="btn btn-lg">Вернуться на тропу</a>
         </div>
     `;
 }

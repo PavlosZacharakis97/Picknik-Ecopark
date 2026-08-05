@@ -3,17 +3,32 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 32px;
-    background: var(--bg-card);
-    box-shadow: var(--shadow);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: none;
     position: sticky;
     top: 0;
     z-index: 100;
+    transition: box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.navbar.scrolled {
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: var(--shadow);
 }
 
 .nav-brand {
     display: flex;
     align-items: baseline;
     gap: 6px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.nav-logo-img {
+    height: 40px;
+    width: auto;
 }
 
 .brand-text {
