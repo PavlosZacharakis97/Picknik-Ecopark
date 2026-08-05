@@ -25,34 +25,29 @@
 
 .footer-socials {
     display: flex;
-    gap: 20px;
+    gap: 14px;
 }
 
 .footer-socials a {
-    color: var(--text-light);
-    font-size: 14px;
-    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--bg);
     transition: var(--transition);
-    position: relative;
 }
 
-.footer-socials a::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -4px;
-    width: 0;
-    height: 2px;
-    background: var(--accent);
-    transition: var(--transition);
+.footer-socials a img {
+    width: 20px;
+    height: 20px;
 }
 
 .footer-socials a:hover {
-    color: var(--accent-dark);
-}
-
-.footer-socials a:hover::after {
-    width: 100%;
+    background: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
 }
 
 @media (max-width: 768px) {
