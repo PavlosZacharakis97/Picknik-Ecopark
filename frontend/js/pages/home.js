@@ -10,11 +10,6 @@ async function renderHome() {
 
         return `
             <section class="hero">
-                <div class="hero-blobs">
-                    <span class="hero-blob hb1"></span>
-                    <span class="hero-blob hb2"></span>
-                    <span class="hero-blob hb3"></span>
-                </div>
                 <div class="container hero-inner">
                     <span class="hero-kicker">Пикник Эко-парк</span>
                     <h1>Отдых <span class="text-accent">среди леса</span>,<br>в двух шагах от города</h1>
