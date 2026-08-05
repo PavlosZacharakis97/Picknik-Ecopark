@@ -28,8 +28,9 @@
 }
 
 .cottage-name {
-    font-size: 20px;
-    font-weight: 700;
+    font-family: var(--font-heading);
+    font-size: 21px;
+    font-weight: 600;
     margin-bottom: 8px;
     color: var(--text);
 }
