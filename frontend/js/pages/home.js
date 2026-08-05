@@ -9,32 +9,64 @@ async function renderHome() {
         cachedCottages = cottages;
 
         return `
-            <div class="container">
-                ${weather ? weatherWidget(weather) : ''}
-
-                <div class="hero">
-                    <h1>Аренда домиков в экопарке</h1>
-                    <p>Уютные коттеджи среди природы. Идеальное место для отдыха с семьёй или друзьями.</p>
+            <section class="hero">
+                <div class="hero-blobs">
+                    <span class="hero-blob hb1"></span>
+                    <span class="hero-blob hb2"></span>
+                    <span class="hero-blob hb3"></span>
                 </div>
+                <div class="container hero-inner">
+                    <span class="hero-kicker">Пикник Эко-парк</span>
+                    <h1>Отдых <span class="text-accent">среди леса</span>,<br>в двух шагах от города</h1>
+                    <p class="hero-lead">Уютные коттеджи среди природы — идеальное место для отдыха с семьёй или друзьями.</p>
+                    <div class="hero-actions">
+                        <a href="#cottage-map" class="btn btn-lg">Смотреть домики</a>
+                    </div>
+                    <div class="hero-badges">
+                        <span>🌲 Домики среди леса</span>
+                        <span>🔥 Мангал и терраса</span>
+                        <span>📶 Wi-Fi в каждом домике</span>
+                    </div>
+                    ${weather ? `<div style="margin-top:32px;">${weatherWidget(weather)}</div>` : ''}
+                </div>
+                <div class="hero-wave">
+                    <svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0,20 C360,70 1080,-20 1440,24 L1440,60 L0,60 Z"></path></svg>
+                </div>
+            </section>
 
-                <div class="map-container">
+            <div class="container">
+                <div class="map-container reveal-up" id="cottage-map">
                     <div class="map-area" id="map">
                         ${cottages.map(c => cottageMarker(c)).join('')}
                         <div id="map-popup" class="map-popup" style="display:none;"></div>
                     </div>
                 </div>
 
-                <div class="filter-bar">
+                <div class="filter-bar reveal-up">
                     <button class="filter-btn active" onclick="filterCottages('all')">Все</button>
                     <button class="filter-btn" onclick="filterCottages('standard')">Стандарт</button>
                     <button class="filter-btn" onclick="filterCottages('comfort')">Комфорт</button>
                     <button class="filter-btn" onclick="filterCottages('luxury')">Люкс</button>
                 </div>
 
-                <h2 class="section-title">Доступные домики</h2>
+                <h2 class="section-title reveal-up">Доступные домики</h2>
                 <div class="cottages-grid" id="cottages-grid">
                     ${cottages.map(c => cottageCard(c)).join('')}
                 </div>
+
+                <section class="location-section reveal-up">
+                    <div class="location-text">
+                        <h2 class="section-title">Как нас найти</h2>
+                        <p>Экопарк расположен в живописном месте среди леса — удобно добраться на машине или общественным транспортом.</p>
+                        <a href="https://www.google.com/maps?q=55.7558,37.6173" target="_blank" rel="noopener" class="btn btn-outline">Проложить маршрут</a>
+                    </div>
+                    <div class="location-map">
+                        <iframe
+                            src="https://maps.google.com/maps?q=55.7558,37.6173&z=13&output=embed"
+                            width="100%" height="360" style="border:0;" allowfullscreen loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade" title="Карта проезда к экопарку"></iframe>
+                    </div>
+                </section>
             </div>
         `;
     } catch (err) {
