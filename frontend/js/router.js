@@ -19,7 +19,14 @@ function navigate(path) {
 }
 
 function getRoute() {
-    return window.location.hash.slice(1) || '/';
+    const hash = window.location.hash.slice(1) || '/';
+    return hash.split('?')[0];
+}
+
+function getQueryParams() {
+    const hash = window.location.hash.slice(1) || '/';
+    const queryString = hash.split('?')[1] || '';
+    return Object.fromEntries(new URLSearchParams(queryString));
 }
 
 function matchRoute(path) {

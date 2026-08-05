@@ -1,6 +1,7 @@
 function renderAuth(mode) {
     const isLogin = mode === 'login';
-    
+    const refCode = !isLogin ? (getQueryParams().ref || '') : '';
+
     return `
         <div class="auth-section">
             <div class="auth-layout">
@@ -11,7 +12,9 @@ function renderAuth(mode) {
                     <h2 class="form-title">${isLogin ? 'Вход в кабинет' : 'Регистрация'}</h2>
                     <p class="form-subtitle">${isLogin ? 'Войдите в личный кабинет по email и паролю' : 'Создайте аккаунт для бронирования'}</p>
                     
+                    ${refCode ? `<div class="alert alert-success" style="margin-bottom:16px;">Вы регистрируетесь по приглашению — промокод на 10% скидку будет доступен автоматически</div>` : ''}
                     <form onsubmit="handleAuthSubmit(event, '${mode}')">
+                        ${refCode ? `<input type="hidden" name="ref_code" value="${refCode}">` : ''}
                         ${!isLogin ? `
                             <div class="form-row">
                                 <div class="form-group">
