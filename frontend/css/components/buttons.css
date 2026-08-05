@@ -17,7 +17,13 @@
 .btn:hover {
     background: var(--primary-dark);
     border-color: var(--primary-dark);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(90, 126, 94, 0.32);
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: none;
 }
 
 .btn-outline {
