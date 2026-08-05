@@ -78,11 +78,15 @@ function render() {
     try {
         const content = matched.handler(matched.params);
         if (content instanceof Promise) {
-            content.then(html => app.innerHTML = html).catch(err => {
+            content.then(html => {
+                app.innerHTML = html;
+                initScrollReveal();
+            }).catch(err => {
                 app.innerHTML = renderError(err.message);
             });
         } else {
             app.innerHTML = content;
+            initScrollReveal();
         }
     } catch (error) {
         console.error('Render error:', error);
