@@ -10,19 +10,21 @@ async function renderHome() {
 
         return `
             <section class="hero">
-                <div class="container hero-inner">
-                    <span class="hero-kicker">Пикник Эко-парк</span>
-                    <h1>Отдых <span class="text-accent">среди леса</span>,<br>в двух шагах от города</h1>
-                    <p class="hero-lead">Уютные коттеджи среди природы — идеальное место для отдыха с семьёй или друзьями.</p>
-                    <div class="hero-actions">
-                        <a href="#cottage-map" class="btn btn-lg">Смотреть домики</a>
+                <div class="container">
+                    <div class="hero-card">
+                        <span class="hero-kicker">Пикник Эко-парк</span>
+                        <h1>Отдых <span class="text-accent">среди леса</span>,<br>в двух шагах от города</h1>
+                        <p class="hero-lead">Уютные коттеджи среди природы — идеальное место для отдыха с семьёй или друзьями.</p>
+                        <div class="hero-actions">
+                            <a href="#cottage-map" class="btn btn-lg">Смотреть домики</a>
+                        </div>
+                        <div class="hero-badges">
+                            <span>🌲 Домики среди леса</span>
+                            <span>🔥 Мангал и терраса</span>
+                            <span>📶 Wi-Fi в каждом домике</span>
+                        </div>
+                        ${weather ? `<div style="margin-top:32px;">${weatherWidget(weather)}</div>` : ''}
                     </div>
-                    <div class="hero-badges">
-                        <span>🌲 Домики среди леса</span>
-                        <span>🔥 Мангал и терраса</span>
-                        <span>📶 Wi-Fi в каждом домике</span>
-                    </div>
-                    ${weather ? `<div style="margin-top:32px;">${weatherWidget(weather)}</div>` : ''}
                 </div>
                 <div class="hero-wave">
                     <svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0,20 C360,70 1080,-20 1440,24 L1440,60 L0,60 Z"></path></svg>
