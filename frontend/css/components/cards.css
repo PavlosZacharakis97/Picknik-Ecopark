@@ -23,6 +23,39 @@
     position: relative;
 }
 
+.fav-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.fav-btn:hover {
+    transform: scale(1.1);
+}
+
+.fav-btn.pop {
+    animation: fav-pop 0.35s ease;
+}
+
+@keyframes fav-pop {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.35); }
+    60% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
 .cottage-info {
     padding: 20px;
 }
