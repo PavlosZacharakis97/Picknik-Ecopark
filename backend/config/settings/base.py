@@ -1,7 +1,10 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+
+load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = 'django-insecure-change-me-in-production-piknik-ecopark-2026'
 
@@ -72,14 +75,14 @@ DATABASES = {
     }
 }
 
-# Password validation
+# Validator parolia
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
 ]
 
-# Internationalization
+# Iaziki
 LANGUAGE_CODE = 'ru'
 TIME_ZONE = 'Europe/Moscow'
 USE_I18N = True
@@ -93,7 +96,6 @@ LANGUAGES = [
 
 LOCALE_PATHS = [BASE_DIR / 'locale']
 
-# Static files
 # Static files
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'frontend']  # otdau vsiu papku kak static
@@ -118,8 +120,22 @@ REST_FRAMEWORK = {
 }
 
 # Email
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'booking@piknik-ecopark.ru'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+
+if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+else:
+    # пока не заданы настоящие креды в .env — письма просто печатаются в консоль
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or 'booking@piknik-ecopark.ru'
+
+# Куда падают сообщения с формы обратной связи на главной
+CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', 'pavlosbatumi@gmail.com')
 
 # Cache
 CACHES = {
@@ -131,6 +147,6 @@ CACHES = {
 
 
 
-# CORS — разрешаем фронтенду обращаться к API
+# razreshau frontu obshatsia s API
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True

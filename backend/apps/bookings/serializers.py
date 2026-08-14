@@ -25,16 +25,18 @@ class CottageSerializer(OccupiedUntilMixin, serializers.ModelSerializer):
 class CottageListSerializer(OccupiedUntilMixin, serializers.ModelSerializer):
     class Meta:
         model = Cottage
-        fields = ['id', 'number', 'name', 'cottage_type', 'price_per_night', 'max_guests', 'image', 'is_active', 'latitude', 'longitude', 'occupied_until']
+        fields = ['id', 'number', 'name', 'name_en', 'name_cs', 'cottage_type', 'price_per_night', 'max_guests', 'bedrooms', 'image', 'is_active', 'latitude', 'longitude', 'occupied_until']
 
 
 class BookingSerializer(serializers.ModelSerializer):
     cottage_name = serializers.CharField(source='cottage.name', read_only=True)
+    cottage_name_en = serializers.CharField(source='cottage.name_en', read_only=True)
+    cottage_name_cs = serializers.CharField(source='cottage.name_cs', read_only=True)
     cottage_number = serializers.IntegerField(source='cottage.number', read_only=True)
 
     class Meta:
         model = Booking
-        fields = ['id', 'user', 'cottage', 'cottage_name', 'cottage_number', 'check_in', 'check_out', 'guests', 'total_price', 'status', 'promo_code', 'notes', 'created_at']
+        fields = ['id', 'user', 'cottage', 'cottage_name', 'cottage_name_en', 'cottage_name_cs', 'cottage_number', 'check_in', 'check_out', 'guests', 'total_price', 'status', 'promo_code', 'notes', 'created_at']
         read_only_fields = ['user', 'total_price', 'status']
 
 
@@ -68,5 +70,10 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ['id', 'booking', 'user', 'user_name', 'rating', 'comment', 'created_at']
+        fields = ['id', 'cottage', 'booking', 'user', 'user_name', 'rating', 'comment', 'created_at']
         read_only_fields = ['user']
+
+    def validate_rating(self, value):
+        if not 1 <= value <= 5:
+            raise serializers.ValidationError('Оценка должна быть от 1 до 5')
+        return value

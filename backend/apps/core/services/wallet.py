@@ -10,7 +10,7 @@ def credit_balance(user, amount, tx_type, status='completed', description='',
 
     amount = Decimal(amount)
     with db_transaction.atomic():
-        type(user).objects.filter(pk=user.pk).update(balance=F('balance') + amount)
+        user.__class__.objects.filter(pk=user.pk).update(balance=F('balance') + amount)
         user.refresh_from_db(fields=['balance'])
         return Transaction.objects.create(
             user=user,

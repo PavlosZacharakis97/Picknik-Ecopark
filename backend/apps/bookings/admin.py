@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Cottage, Booking, Review
+from .models import Cottage, Booking, Review, BlockedDate
+
+
+class BlockedDateInline(admin.TabularInline):
+    model = BlockedDate
+    extra = 1
 
 
 @admin.register(Cottage)
@@ -8,6 +13,14 @@ class CottageAdmin(admin.ModelAdmin):
     list_filter = ['cottage_type', 'is_active', 'has_wifi', 'has_kitchen']
     search_fields = ['name', 'number', 'description']
     list_editable = ['price_per_night', 'is_active']
+    inlines = [BlockedDateInline]
+
+
+@admin.register(BlockedDate)
+class BlockedDateAdmin(admin.ModelAdmin):
+    list_display = ['cottage', 'start_date', 'end_date', 'reason']
+    list_filter = ['cottage']
+    date_hierarchy = 'start_date'
 
 
 
@@ -21,5 +34,6 @@ class BookingAdmin(admin.ModelAdmin):
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ['booking', 'user', 'rating', 'created_at']
-    list_filter = ['rating', 'created_at']
+    list_display = ['cottage', 'user', 'rating', 'created_at']
+    list_filter = ['rating', 'cottage', 'created_at']
+    search_fields = ['user__email', 'cottage__name', 'comment']

@@ -11,7 +11,7 @@ WITHDRAWAL_COMMISSION_RATE = Decimal('0.10')
 def request_withdrawal(user, amount, method, card_last4=''):
     amount = Decimal(amount)
     if amount < MIN_WITHDRAWAL_AMOUNT:
-        raise ValueError(f'Минимальная сумма вывода — {MIN_WITHDRAWAL_AMOUNT} руб')
+        raise ValueError(f'Минимальная сумма вывода — {MIN_WITHDRAWAL_AMOUNT} Kč')
     if amount > user.balance:
         raise ValueError('Недостаточно средств на балансе')
 

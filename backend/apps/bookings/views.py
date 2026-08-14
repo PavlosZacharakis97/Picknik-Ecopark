@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import login
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from apps.core.services.wallet import credit_balance, debit_balance
 from apps.users.models import PhoneVerificationCode
@@ -15,12 +15,15 @@ from apps.users.serializers import UserProfileSerializer
 from apps.users.services import get_or_create_user_by_phone
 from apps.wallet.models import ReferralCommission
 
-from .models import Cottage, Booking, Review
+from .models import Cottage, Booking, Review, BlockedDate
 from .serializers import (
     CottageSerializer, CottageListSerializer, BookingSerializer,
-    BookingCreateSerializer, PriceCalculationSerializer, ReviewSerializer
+    BookingCreateSerializer, PriceCalculationSerializer, ReviewSerializer,
+    ACTIVE_BOOKING_STATUSES,
 )
 from .services import calculate_booking_price, find_referrer
+
+CALENDAR_HORIZON_DAYS = 548
 
 REFERRAL_BOOKING_COMMISSION_RATE = 0.15
 
@@ -41,6 +44,37 @@ def cottage_detail(request, pk):
     cottage = get_object_or_404(Cottage, pk=pk, is_active=True)
     serializer = CottageSerializer(cottage)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def cottage_calendar(request, pk):
+    cottage = get_object_or_404(Cottage, pk=pk, is_active=True)
+    today = timezone.now().date()
+    horizon = today + timedelta(days=CALENDAR_HORIZON_DAYS)
+
+    occupied = set()
+
+    bookings = Booking.objects.filter(
+        cottage=cottage,
+        status__in=ACTIVE_BOOKING_STATUSES,
+        check_out__gte=today,
+        check_in__lte=horizon,
+    )
+    for booking in bookings:
+        day = max(booking.check_in, today)
+        while day < booking.check_out and day <= horizon:
+            occupied.add(day.isoformat())
+            day += timedelta(days=1)
+
+    blocks = BlockedDate.objects.filter(cottage=cottage, end_date__gte=today, start_date__lte=horizon)
+    for block in blocks:
+        day = max(block.start_date, today)
+        while day <= block.end_date and day <= horizon:
+            occupied.add(day.isoformat())
+            day += timedelta(days=1)
+
+    return Response({'occupied_dates': sorted(occupied)})
 
 
 # PRICE CALCULATOR
@@ -113,6 +147,15 @@ def booking_create(request):
 
     if overlapping:
         return Response({'error': 'Эти даты уже заняты'}, status=status.HTTP_400_BAD_REQUEST)
+
+    blocked = BlockedDate.objects.filter(
+        cottage=cottage,
+        start_date__lt=check_out,
+        end_date__gte=check_in,
+    ).exists()
+
+    if blocked:
+        return Response({'error': 'Эти даты закрыты администрацией'}, status=status.HTTP_400_BAD_REQUEST)
 
     if guests > cottage.max_guests:
         return Response({'error': f'Максимум гостей: {cottage.max_guests}'}, status=400)
@@ -208,7 +251,7 @@ def booking_cancel(request, pk):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def review_list(request, cottage_id):
-    reviews = Review.objects.filter(booking__cottage_id=cottage_id)
+    reviews = Review.objects.filter(cottage_id=cottage_id)
     serializer = ReviewSerializer(reviews, many=True)
     return Response(serializer.data)
 

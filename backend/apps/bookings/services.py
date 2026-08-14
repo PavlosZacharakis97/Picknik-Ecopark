@@ -21,7 +21,7 @@ def calculate_booking_price(cottage, check_in, check_out, guests, promo_code='')
         raise ValueError('Дата выезда должна быть позже даты заезда')
 
     nights = (check_out - check_in).days
-    total = float(cottage.price_per_night) * nights * guests
+    total = float(cottage.price_per_night) * nights
 
     discount = 0
     promo_code_upper = (promo_code or '').upper()
