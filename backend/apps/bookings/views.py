@@ -92,6 +92,7 @@ def calculate_price(request):
     try:
         result = calculate_booking_price(
             cottage, data['check_in'], data['check_out'], data['guests'], data.get('promo_code', ''),
+            user=request.user,
         )
     except ValueError as err:
         return Response({'error': str(err)}, status=400)
@@ -162,7 +163,7 @@ def booking_create(request):
 
     promo_code = data.get('promo_code', '')
     try:
-        price = calculate_booking_price(cottage, check_in, check_out, guests, promo_code)
+        price = calculate_booking_price(cottage, check_in, check_out, guests, promo_code, user=user)
     except ValueError as err:
         return Response({'error': str(err)}, status=400)
 
