@@ -17,7 +17,7 @@
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: url('/static/assets/images/hero-forest-bg.png') 50% top / cover no-repeat;
+    background: url('/static/assets/images/background_na_registraciu.jpeg') 50% top / cover no-repeat;
     animation: auth-forest-drift 43.2s ease-in-out infinite alternate;
 }
 
@@ -39,6 +39,17 @@
     align-items: center;
     max-width: 900px;
     width: 100%;
+}
+
+.auth-layout--register {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    max-width: 560px;
+}
+
+.auth-layout--register .form-container {
+    width: 100%;
+    max-width: 560px;
 }
 
 .auth-image {

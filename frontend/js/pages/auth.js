@@ -4,10 +4,12 @@ function renderAuth(mode) {
 
     return `
         <div class="auth-section ${!isLogin ? 'auth-section--register' : ''}">
-            <div class="auth-layout">
-                <div class="auth-image ${isLogin ? 'has-illustration' : ''}">
-                    ${isLogin ? '<img src="/static/assets/images/illustration-login.png" alt="">' : icon('cottage', 80)}
+            <div class="auth-layout ${!isLogin ? 'auth-layout--register' : ''}">
+                ${isLogin ? `
+                <div class="auth-image has-illustration">
+                    <img src="/static/assets/images/illustration-login.png" alt="">
                 </div>
+                ` : ''}
                 <div class="form-container">
                     <h2 class="form-title">${isLogin ? t('login_title') : t('register_title')}</h2>
                     <p class="form-subtitle">${isLogin ? t('login_subtitle') : t('register_subtitle')}</p>
@@ -36,7 +38,7 @@ function renderAuth(mode) {
                         ${!isLogin ? `
                             <div class="form-group">
                                 <label>${t('phone_label')}</label>
-                                <input type="tel" name="phone_number" placeholder="+7 (999) 000-00-00" autocomplete="off">
+                                <input type="tel" name="phone_number" placeholder="+123 456 789" autocomplete="off">
                             </div>
                         ` : ''}
 

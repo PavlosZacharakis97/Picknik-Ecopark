@@ -21,7 +21,7 @@ async function bookingForm(cottageId, pricePerNight, isGuest = false, userBalanc
             <div class="form-group full phone-step" id="phone-step">
                 <label>${t('phone_label')}</label>
                 <div class="phone-row">
-                    <input type="tel" id="phone-input" placeholder="+7 999 123-45-67">
+                    <input type="tel" id="phone-input" placeholder="+123 456 789">
                     <button type="button" class="btn btn-sm" onclick="handleSendSmsCode(event)">${t('send_sms_btn')}</button>
                 </div>
             </div>
@@ -227,7 +227,7 @@ function handleCancelPhoneStep() {
   step.innerHTML = `
         <label>${t('phone_label')}</label>
         <div class="phone-row">
-            <input type="tel" id="phone-input" placeholder="+7 999 123-45-67">
+            <input type="tel" id="phone-input" placeholder="+123 456 789">
             <button type="button" class="btn btn-sm" onclick="handleSendSmsCode(event)">${t('send_sms_btn')}</button>
         </div>
     `;
