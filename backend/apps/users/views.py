@@ -1,6 +1,7 @@
 import random
 from datetime import timedelta
 
+from django_ratelimit.decorators import ratelimit
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -10,6 +11,7 @@ from django.contrib.auth.hashers import check_password
 from django.utils import timezone
 
 from apps.core.services.sms import send_sms
+from apps.core.utils import too_many_requests
 
 from .models import PhoneVerificationCode
 from .serializers import (
@@ -21,9 +23,17 @@ User = get_user_model()
 CODE_VALIDITY_MINUTES = 5
 
 
+def phone_number_key(group, request):
+    return request.data.get('phone_number', '')
+
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@ratelimit(key='ip', rate='20/h', method='POST', block=False)
 def register(request):
+    if getattr(request, 'limited', False):
+        return too_many_requests()
+
     serializer = UserRegisterSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
@@ -47,7 +57,11 @@ def register(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@ratelimit(key='ip', rate='10/m', method='POST', block=False)
 def login_view(request):
+    if getattr(request, 'limited', False):
+        return too_many_requests()
+
     serializer = UserLoginSerializer(data=request.data)
     if serializer.is_valid():
         email = serializer.validated_data['email']
@@ -90,7 +104,11 @@ def profile(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@ratelimit(key='user', rate='5/m', method='POST', block=False)
 def change_password(request):
+    if getattr(request, 'limited', False):
+        return too_many_requests()
+
     serializer = ChangePasswordSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -106,7 +124,12 @@ def change_password(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@ratelimit(key='ip', rate='10/m', method='POST', block=False)
+@ratelimit(key=phone_number_key, rate='3/m', method='POST', block=False)
 def phone_send_code(request):
+    if getattr(request, 'limited', False):
+        return too_many_requests()
+
     serializer = PhoneSendCodeSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -124,7 +147,12 @@ def phone_send_code(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@ratelimit(key='ip', rate='15/m', method='POST', block=False)
+@ratelimit(key=phone_number_key, rate='8/m', method='POST', block=False)
 def phone_verify_code(request):
+    if getattr(request, 'limited', False):
+        return too_many_requests()
+
     serializer = PhoneVerifyCodeSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,8 +1,14 @@
 from django.utils import timezone
 from rest_framework import serializers
-from .models import Cottage, Booking, Review
+from .models import Cottage, CottageImage, Booking, Review
 
 ACTIVE_BOOKING_STATUSES = ['pending', 'confirmed', 'paid']
+
+
+class CottageImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CottageImage
+        fields = ['id', 'image', 'order']
 
 
 class OccupiedUntilMixin(serializers.Serializer):
@@ -17,15 +23,19 @@ class OccupiedUntilMixin(serializers.Serializer):
 
 
 class CottageSerializer(OccupiedUntilMixin, serializers.ModelSerializer):
+    images = CottageImageSerializer(many=True, read_only=True)
+
     class Meta:
         model = Cottage
         fields = '__all__'
 
 
 class CottageListSerializer(OccupiedUntilMixin, serializers.ModelSerializer):
+    images = CottageImageSerializer(many=True, read_only=True)
+
     class Meta:
         model = Cottage
-        fields = ['id', 'number', 'name', 'name_en', 'name_cs', 'cottage_type', 'price_per_night', 'max_guests', 'bedrooms', 'image', 'is_active', 'latitude', 'longitude', 'occupied_until']
+        fields = ['id', 'number', 'name', 'name_en', 'name_cs', 'cottage_type', 'price_per_night', 'max_guests', 'bedrooms', 'image', 'images', 'is_active', 'latitude', 'longitude', 'occupied_until']
 
 
 class BookingSerializer(serializers.ModelSerializer):

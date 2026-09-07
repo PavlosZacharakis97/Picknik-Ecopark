@@ -1,10 +1,46 @@
 .hero {
     position: relative;
     overflow: hidden;
-    background: url('/static/assets/images/hero-forest-bg.png') center 55% / cover no-repeat;
+    width: 100%;
     padding: 110px 0 76px;
     margin-bottom: 64px;
-    border-radius: 0 0 40px 40px;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url('/static/assets/images/sky_bg_1.png') 50% top / cover no-repeat;
+    transform: scale(1);
+    animation: hero-sky-drift 36s ease-in-out infinite alternate;
+}
+
+@keyframes hero-sky-drift {
+    from { background-position: 42% top; transform: scale(1); }
+    to { background-position: 58% top; transform: scale(1.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero::before {
+        animation: none;
+    }
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 220px;
+    background: linear-gradient(to bottom, rgba(245, 245, 240, 0) 0%, var(--bg) 100%);
+    pointer-events: none;
+}
+
+.hero--page {
+    padding-left: 32px;
+    padding-right: 32px;
 }
 
 .hero-card {
@@ -71,32 +107,32 @@
 }
 
 .hero-badges span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     background: rgba(255, 255, 255, 0.8);
     border: 1px solid var(--border);
     padding: 6px 14px;
     border-radius: 20px;
 }
 
-.hero-wave {
-    line-height: 0;
-    position: relative;
-    z-index: 1;
-}
-
-.hero-wave svg {
-    display: block;
-    width: 100%;
-    height: 56px;
-}
-
-.hero-wave path {
-    fill: var(--bg);
+.hero-badges .feature-icon {
+    width: 18px;
+    height: 18px;
 }
 
 @media (max-width: 768px) {
     .hero {
         padding: 76px 0 56px;
-        border-radius: 0 0 24px 24px;
+    }
+
+    .hero::after {
+        height: 140px;
+    }
+
+    .hero--page {
+        padding-left: 16px;
+        padding-right: 16px;
     }
 
     .hero-card {

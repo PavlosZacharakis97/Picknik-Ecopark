@@ -1,4 +1,4 @@
-/* ========== HERO HEADER ========== */
+/* Hero header*/
 .hero-header {
     display: flex;
     justify-content: space-between;
@@ -41,7 +41,7 @@
     flex-shrink: 0;
 }
 
-/* ========== MAP ========== */
+/* karta */
 .map-section {
     background: var(--bg-card);
     border-radius: var(--radius);
@@ -59,7 +59,7 @@
     overflow: hidden;
 }
 
-/* SVG Map styling */
+/* SVG stil karti */
 .map-svg {
     width: 100%;
     height: 100%;
@@ -132,7 +132,7 @@
     opacity: 1;
 }
 
-/* ========== EVENT CARD ========== */
+/* kortochki */
 .event-card {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -183,7 +183,7 @@
     margin-top: auto;
 }
 
-/* ========== COTTAGES GRID ========== */
+/* grid kotedjei */
 .section-header {
     display: flex;
-   
+}

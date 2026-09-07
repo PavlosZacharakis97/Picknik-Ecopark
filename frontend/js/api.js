@@ -14,10 +14,15 @@ async function apiRequest(url, options = {}) {
     };
 
     const response = await fetch(`${API_BASE}${url}`, { ...defaults, ...options });
-    
+
     if (!response.ok) {
-        const error = await response.json().catch(() => ({ error: 'Ошибка сервера' }));
-        throw new Error(error.error || error.detail || 'Ошибка запроса');
+        if ((response.status === 401 || response.status === 403) && getStorage('user')) {
+            removeStorage('user');
+            removeStorage('booking_draft');
+            navigate('/login');
+        }
+        const error = await response.json().catch(() => ({ error: t('api_server_error') }));
+        throw new Error(error.error || error.detail || t('api_request_error'));
     }
     
     return response.json();
@@ -45,6 +50,10 @@ function updateProfile(data) {
     return apiRequest('/auth/profile/', { method: 'PATCH', body: JSON.stringify(data) });
 }
 
+function changePassword(data) {
+    return apiRequest('/auth/change-password/', { method: 'POST', body: JSON.stringify(data) });
+}
+
 function sendPhoneCode(data) {
     return apiRequest('/auth/phone/send-code/', { method: 'POST', body: JSON.stringify(data) });
 }
@@ -60,6 +69,18 @@ function getCottages() {
 
 function getCottage(id) {
     return apiRequest(`/cottages/${id}/`);
+}
+
+function getCottageCalendar(id) {
+    return apiRequest(`/cottages/${id}/calendar/`);
+}
+
+function getCottageReviews(id) {
+    return apiRequest(`/cottages/${id}/reviews/`);
+}
+
+function createReview(data) {
+    return apiRequest('/reviews/create/', { method: 'POST', body: JSON.stringify(data) });
 }
 
 // апи брони
@@ -123,4 +144,8 @@ function getTaskSubmissions() {
 // апи советов
 function getTips() {
     return apiRequest('/content/tips/');
+}
+
+function sendContactMessage(data) {
+    return apiRequest('/content/contact/', { method: 'POST', body: JSON.stringify(data) });
 }

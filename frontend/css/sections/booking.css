@@ -1,6 +1,43 @@
+.booking-page {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding: 40px 0;
+}
+
+.booking-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url('/static/assets/images/hero-forest-bg.png') 50% top / cover no-repeat;
+    transform: scale(1);
+    animation: booking-forest-drift 43.2s ease-in-out infinite alternate;
+}
+
+@keyframes booking-forest-drift {
+    from { background-position: 42% top; transform: scale(1); }
+    to { background-position: 58% top; transform: scale(1.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .booking-page::before {
+        animation: none;
+    }
+}
+
 .booking-section {
     max-width: 900px;
     margin: 0 auto;
+}
+
+.booking-info-card {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
 }
 
 .booking-layout {
@@ -15,6 +52,7 @@
     height: 300px;
     background: var(--bg);
     border-radius: var(--radius);
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -36,6 +74,7 @@
 }
 
 .price-display .price {
+    font-family: var(--font-heading);
     font-size: 36px;
     font-weight: 700;
     color: var(--primary);
@@ -44,6 +83,22 @@
 .price-display .price-period {
     font-size: 14px;
     color: var(--text-light);
+}
+
+.price-display--clickable {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    gap: 16px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: var(--transition);
+}
+
+.price-display--clickable:hover {
+    border-color: var(--primary-light);
+    background: rgba(122, 158, 126, 0.16);
 }
 
 .phone-step {

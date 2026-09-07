@@ -1,5 +1,52 @@
+.cabinet-page {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding: 40px 0;
+}
+
+.cabinet-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url('/static/assets/images/hero-forest-bg.png') 50% top / cover no-repeat;
+    transform: scale(1);
+    animation: cabinet-forest-drift 43.2s ease-in-out infinite alternate;
+}
+
+@keyframes cabinet-forest-drift {
+    from { background-position: 42% top; transform: scale(1); }
+    to { background-position: 58% top; transform: scale(1.18); }
+}
+
+.cabinet-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .cabinet-page {
+        padding: 24px 0;
+    }
+
+    .cabinet-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cabinet-page::before {
+        animation: none;
+    }
+}
+
 .sidebar {
-    background: var(--bg-card);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
     border-radius: var(--radius);
     padding: 24px;
     box-shadow: var(--shadow);
@@ -24,6 +71,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: var(--font-heading);
     font-size: 20px;
     font-weight: 700;
 }
@@ -52,10 +100,45 @@
 }
 
 .cabinet-content {
-    background: var(--bg-card);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
     border-radius: var(--radius);
     padding: 32px;
     box-shadow: var(--shadow);
+}
+
+.cabinet-content--balance {
+    position: relative;
+    overflow: hidden;
+    min-height: 340px;
+}
+
+.cabinet-content--balance::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('/static/assets/images/PlatnaiaSvenia.png');
+    background-repeat: no-repeat;
+    background-position: 62% 58%;
+    background-size: cover;
+    -webkit-mask-image: radial-gradient(ellipse 85% 85% at 100% 100%, black 40%, transparent 88%);
+    mask-image: radial-gradient(ellipse 85% 85% at 100% 100%, black 40%, transparent 88%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+@media (max-width: 900px) {
+    .cabinet-content--balance::after {
+        -webkit-mask-image: radial-gradient(ellipse 95% 95% at 100% 100%, black 35%, transparent 85%);
+        mask-image: radial-gradient(ellipse 95% 95% at 100% 100%, black 35%, transparent 85%);
+    }
+}
+
+@media (max-width: 640px) {
+    .cabinet-content--balance::after {
+        display: none;
+    }
 }
 
 .booking-item {

@@ -1,9 +1,12 @@
+from django_ratelimit.decorators import ratelimit
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.conf import settings
 from django.core.mail import EmailMessage
+
+from apps.core.utils import too_many_requests
 
 from .models import Tip, ContactMessage
 from .serializers import TipSerializer, ContactMessageSerializer
@@ -18,7 +21,11 @@ def tip_list(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@ratelimit(key='ip', rate='5/m', method='POST', block=False)
 def contact_create(request):
+    if getattr(request, 'limited', False):
+        return too_many_requests()
+
     serializer = ContactMessageSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

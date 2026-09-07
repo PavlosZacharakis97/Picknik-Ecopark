@@ -71,7 +71,7 @@ DATABASES = {
         'USER': 'piknik_user',
         'PASSWORD': '12345',
         'HOST': 'localhost',
-        'PORT': '5433',
+        'PORT': '5432',
     }
 }
 
@@ -129,15 +129,15 @@ if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
 else:
-    # пока не заданы настоящие креды в .env — письма просто печатаются в консоль
+    # esli ne zadano nopravlenie to pisma pechatautsia tolko v konsole
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or 'booking@piknik-ecopark.ru'
 
-# Куда падают сообщения с формы обратной связи на главной
+# otpravlau vse emaili na etu pochtu(glavnaia pochta) 
 CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', 'pavlosbatumi@gmail.com')
 
-# Cache
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',

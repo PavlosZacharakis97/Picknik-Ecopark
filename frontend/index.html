@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/base/fonts.css?v={% now 'U' %}">
     <link rel="stylesheet" href="/static/css/base/reset.css?v={% now 'U' %}">
     <link rel="stylesheet" href="/static/css/base/variables.css?v={% now 'U' %}">
     <link rel="stylesheet" href="/static/css/mixins/utilities.css?v={% now 'U' %}">
@@ -16,8 +17,11 @@
     <link rel="stylesheet" href="/static/css/components/navbar.css?v={% now 'U' %}">
     <link rel="stylesheet" href="/static/css/components/footer.css?v={% now 'U' %}">
     <link rel="stylesheet" href="/static/css/components/alerts.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/components/modal.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/components/toast.css?v={% now 'U' %}">
     <link rel="stylesheet" href="/static/css/components/loading.css?v={% now 'U' %}">
     <link rel="stylesheet" href="/static/css/components/weather.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/components/calendar.css?v={% now 'U' %}">
     <link rel="stylesheet" href="/static/css/layout/grid.css?v={% now 'U' %}">
     <link rel="stylesheet" href="/static/css/layout/responsive.css?v={% now 'U' %}">
     <link rel="stylesheet" href="/static/css/sections/hero.css?v={% now 'U' %}">
@@ -29,24 +33,48 @@
     <link rel="stylesheet" href="/static/css/sections/tips.css?v={% now 'U' %}">
     <link rel="stylesheet" href="/static/css/sections/notfound.css?v={% now 'U' %}">
     <link rel="stylesheet" href="/static/css/sections/location.css?v={% now 'U' %}">
+    <link rel="stylesheet" href="/static/css/sections/reviews.css?v={% now 'U' %}">
 </head>
 <body>
-    <!-- Навбар -->
+<!-- navka -->
     <nav class="navbar">
-        <a href="#/" class="nav-brand">
+        <a href="#/" class="nav-brand" onclick="handleLogoClick(event)">
             <img src="/static/assets/images/logo.png" alt="Пикник Эко-парк" class="nav-logo-img">
         </a>
-        <a href="#/login" class="btn btn-sm btn-login" id="auth-link">Вход в кабинет</a>
+        <div class="nav-menu">
+            <button type="button" class="burger-btn" id="burger-btn" onclick="toggleNavMenu()" data-i18n-aria="nav_menu_aria" aria-label="Меню" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="nav-dropdown" id="nav-dropdown">
+                <div class="nav-dropdown-greeting" id="nav-dropdown-greeting" style="display:none;"></div>
+                <a href="#/favorites" class="nav-dropdown-item nav-link">
+                    <span class="nav-dropdown-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.3-9.5-8.8C1 8 2 4.5 5.3 3.7c2-.5 3.8.4 4.7 2 .9-1.6 2.7-2.5 4.7-2 3.3.8 4.3 4.3 2.8 7.5C19 15.7 12 20 12 20Z"/></svg></span> <span data-i18n="nav_favorites">Избранное</span>
+                </a>
+                <a href="#/cabinet" class="nav-dropdown-item nav-link" id="profile-link" style="display:none;">
+                    <span class="nav-dropdown-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="M4.5 20c1.4-4 4.4-6 7.5-6s6.1 2 7.5 6"/></svg></span> <span data-i18n="nav_profile">Мой профиль</span>
+                </a>
+                <div class="nav-dropdown-divider"></div>
+                <a href="#/login" class="nav-dropdown-item nav-dropdown-item--auth" id="auth-link">
+                    <span class="nav-dropdown-icon" id="auth-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-6"/><path d="M15 12H4m0 0 3.5-3.5M4 12l3.5 3.5"/></svg></span> <span id="auth-link-text">Вход в кабинет</span>
+                </a>
+                <div class="nav-dropdown-divider"></div>
+                <div class="nav-lang-switch" id="nav-lang-switch">
+                    <button type="button" class="nav-lang-btn" onclick="setLanguage('ru')">RU</button>
+                    <button type="button" class="nav-lang-btn" onclick="setLanguage('en')">EN</button>
+                    <button type="button" class="nav-lang-btn" onclick="setLanguage('cs')">CZ</button>
+                </div>
+            </div>
+        </div>
     </nav>
 
-    <!-- Основной контент -->
+    <!-- osnovnoi kontent -->
     <main id="app"></main>
 
-    <!-- Футер -->
+    <!-- footer -->
     <footer class="footer">
         <div class="footer-links">
-            <a href="#">Политика конфиденциальности</a>
-            <a href="#">Публичная оферта</a>
+            <a href="#" data-i18n="footer_privacy">Политика конфиденциальности</a>
+            <a href="#" data-i18n="footer_terms">Публичная оферта</a>
         </div>
         <div class="footer-socials">
             <a href="https://vk.ru/" target="_blank" rel="noopener" aria-label="VK">
@@ -64,15 +92,25 @@
         </div>
     </footer>
 
-    <!-- Скрипты -->
+    <!-- skripti -->
     <script src="/static/js/utils/cookies.js?v={% now 'U' %}"></script>
+    <script src="/static/js/utils/icons.js?v={% now 'U' %}"></script>
+    <script src="/static/js/utils/toast.js?v={% now 'U' %}"></script>
+    <script src="/static/js/utils/confirmDialog.js?v={% now 'U' %}"></script>
+    <script src="/static/js/i18n.js?v={% now 'U' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pristinejs@1.1.0/dist/pristine.min.js"></script>
+    <script src="/static/js/utils/validation.js?v={% now 'U' %}"></script>
     <script src="/static/js/utils/scrollReveal.js?v={% now 'U' %}"></script>
     <script src="/static/js/api.js?v={% now 'U' %}"></script>
     <script src="/static/js/components/cottageCard.js?v={% now 'U' %}"></script>
+    <script src="/static/js/components/cottageGallery.js?v={% now 'U' %}"></script>
+    <script src="/static/js/components/calendar.js?v={% now 'U' %}"></script>
+    <script src="/static/js/components/reviews.js?v={% now 'U' %}"></script>
     <script src="/static/js/components/bookingForm.js?v={% now 'U' %}"></script>
     <script src="/static/js/components/cabinetSidebar.js?v={% now 'U' %}"></script>
     <script src="/static/js/components/tipsCarousel.js?v={% now 'U' %}"></script>
     <script src="/static/js/pages/home.js?v={% now 'U' %}"></script>
+    <script src="/static/js/pages/favorites.js?v={% now 'U' %}"></script>
     <script src="/static/js/pages/auth.js?v={% now 'U' %}"></script>
     <script src="/static/js/pages/cabinet.js?v={% now 'U' %}"></script>
     <script src="/static/js/pages/booking.js?v={% now 'U' %}"></script>

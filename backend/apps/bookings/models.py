@@ -40,6 +40,20 @@ class Cottage(models.Model):
         return f'Домик №{self.number} — {self.name}'
 
 
+class CottageImage(models.Model):
+    cottage = models.ForeignKey(Cottage, on_delete=models.CASCADE, related_name='images', verbose_name=_('Коттедж'))
+    image = models.ImageField(upload_to='cottages/gallery/', verbose_name=_('Фото'))
+    order = models.PositiveIntegerField(default=0, verbose_name=_('Порядок'))
+
+    class Meta:
+        verbose_name = _('Фото коттеджа')
+        verbose_name_plural = _('Фотографии коттеджа')
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        return f'Фото для {self.cottage}'
+
+
 class Booking(models.Model):
     STATUS_CHOICES = [
         ('pending', _('Ожидает подтверждения')),
@@ -98,6 +112,7 @@ class Review(models.Model):
         verbose_name = _('Отзыв')
         verbose_name_plural = _('Отзывы')
         ordering = ['-created_at']
+        unique_together = [['cottage', 'user']]
 
     def __str__(self):
         return f'Отзыв {self.rating}★ — {self.user.first_name}'

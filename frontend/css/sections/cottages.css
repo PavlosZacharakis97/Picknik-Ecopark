@@ -3,6 +3,7 @@
     font-weight: 700;
     margin-bottom: 24px;
     color: var(--text);
+    scroll-margin-top: 90px;
 }
 
 .cottages-header {

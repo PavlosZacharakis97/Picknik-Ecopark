@@ -6,6 +6,32 @@
     padding: 32px 16px;
 }
 
+.auth-section--register {
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+}
+
+.auth-section--register::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url('/static/assets/images/hero-forest-bg.png') 50% top / cover no-repeat;
+    animation: auth-forest-drift 43.2s ease-in-out infinite alternate;
+}
+
+@keyframes auth-forest-drift {
+    from { background-position: 42% top; transform: scale(1); }
+    to { background-position: 58% top; transform: scale(1.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-section--register::before {
+        animation: none;
+    }
+}
+
 .auth-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;

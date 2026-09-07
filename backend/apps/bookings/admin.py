@@ -1,10 +1,16 @@
 from django.contrib import admin
-from .models import Cottage, Booking, Review, BlockedDate
+from .models import Cottage, CottageImage, Booking, Review, BlockedDate
 
 
 class BlockedDateInline(admin.TabularInline):
     model = BlockedDate
     extra = 1
+
+
+class CottageImageInline(admin.TabularInline):
+    model = CottageImage
+    extra = 1
+    fields = ['image', 'order']
 
 
 @admin.register(Cottage)
@@ -13,7 +19,7 @@ class CottageAdmin(admin.ModelAdmin):
     list_filter = ['cottage_type', 'is_active', 'has_wifi', 'has_kitchen']
     search_fields = ['name', 'number', 'description']
     list_editable = ['price_per_night', 'is_active']
-    inlines = [BlockedDateInline]
+    inlines = [CottageImageInline, BlockedDateInline]
 
 
 @admin.register(BlockedDate)

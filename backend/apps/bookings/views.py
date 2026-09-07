@@ -212,12 +212,21 @@ def booking_create(request):
             related_object_type='booking', related_object_id=booking.id,
         )
 
-    # Отправка email
+    # Отправка email клиенту
     send_mail(
         subject=f'Подтверждение бронирования — {cottage.name}',
         message=f'''Здравствуйте, {user.first_name}!\n\nВаше бронирование подтверждено:\n\nКоттедж: {cottage.name} (Домик №{cottage.number})\nДаты: {check_in} — {check_out}\nГостей: {guests}\nНочей: {price['nights']}\nИтого: {booking.total_price} Kč\n\nСтатус: Оплачено\n\nС уважением,\nКоманда Пикник Эко-парк''',
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[user.email],
+        fail_silently=True,
+    )
+
+    # Уведомление администратору о новой брони
+    send_mail(
+        subject=f'Новое бронирование — Домик №{cottage.number} ({cottage.name})',
+        message=f'''Новое бронирование на сайте:\n\nКоттедж: {cottage.name} (Домик №{cottage.number})\nКлиент: {user.first_name} {user.last_name} ({user.email}, {user.phone_number})\nДаты: {check_in} — {check_out}\nГостей: {guests}\nНочей: {price['nights']}\nИтого: {booking.total_price} Kč\nПромокод: {promo_code or "—"}\nНомер брони: {booking.id}''',
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[settings.CONTACT_EMAIL],
         fail_silently=True,
     )
 
@@ -262,6 +271,9 @@ def review_list(request, cottage_id):
 def review_create(request):
     serializer = ReviewSerializer(data=request.data)
     if serializer.is_valid():
+        cottage = serializer.validated_data['cottage']
+        if Review.objects.filter(cottage=cottage, user=request.user).exists():
+            return Response({'error': 'Вы уже оставили отзыв для этого домика'}, status=status.HTTP_400_BAD_REQUEST)
         serializer.save(user=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

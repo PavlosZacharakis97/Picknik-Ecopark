@@ -1,4 +1,4 @@
-/* Utility classes - аналог миксинов */
+/* utiliti - analog mixinov */
 
 .flex {
     display: flex;
@@ -43,6 +43,20 @@
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     border: 0;
+}
+
+.icon {
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.icon-inline {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    vertical-align: -3px;
+    margin-right: 6px;
 }
 
 .reveal-up {

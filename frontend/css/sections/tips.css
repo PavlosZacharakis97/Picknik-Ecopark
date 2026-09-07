@@ -1,5 +1,7 @@
 .tips-carousel {
-    background: var(--bg-card);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
     border-radius: var(--radius);
     padding: 32px;
     box-shadow: var(--shadow);

@@ -1,5 +1,7 @@
 .footer {
-    background: var(--bg-card);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
     padding: 24px 32px;
     display: flex;
     justify-content: space-between;

@@ -15,8 +15,9 @@
 }
 
 .weather-icon {
-    font-size: 40px;
-    line-height: 1;
+    display: flex;
+    color: var(--primary-dark);
+    flex-shrink: 0;
 }
 
 .weather-info h3 {
@@ -32,6 +33,7 @@
 }
 
 .weather-temp {
+    font-family: var(--font-heading);
     font-size: 28px;
     font-weight: 700;
     margin-left: auto;
