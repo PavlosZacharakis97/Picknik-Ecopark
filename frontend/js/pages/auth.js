@@ -3,7 +3,7 @@ function renderAuth(mode) {
     const refCode = !isLogin ? (getQueryParams().ref || '') : '';
 
     return `
-        <div class="auth-section ${!isLogin ? 'auth-section--register' : ''}">
+        <div class="auth-section ${isLogin ? 'auth-section--login' : 'auth-section--register'}">
             <div class="auth-layout ${!isLogin ? 'auth-layout--register' : ''}">
                 ${isLogin ? `
                 <div class="auth-image has-illustration">
