@@ -5,6 +5,7 @@ urlpatterns = [
     # Cottages
     path('cottages/', views.cottage_list, name='cottage-list'),
     path('cottages/<int:pk>/', views.cottage_detail, name='cottage-detail'),
+    path('cottages/<int:pk>/calendar/', views.cottage_calendar, name='cottage-calendar'),
     
     # Price calculator
     path('bookings/calculate-price/', views.calculate_price, name='calculate-price'),
@@ -19,6 +20,10 @@ urlpatterns = [
     path('cottages/<int:cottage_id>/reviews/', views.review_list, name='review-list'),
     path('reviews/create/', views.review_create, name='review-create'),
     
+    # Favorites
+    path('favorites/', views.favorite_list, name='favorite-list'),
+    path('favorites/toggle/', views.favorite_toggle, name='favorite-toggle'),
+
     # Weather
     path('weather/', views.weather, name='weather'),
 ]

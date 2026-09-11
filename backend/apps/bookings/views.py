@@ -5,13 +5,27 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 from django.conf import settings
-from datetime import datetime
+from django.contrib.auth import login
+from django.utils import timezone
+from datetime import datetime, timedelta
 
-from .models import Cottage, Booking, Review
+from apps.core.services.wallet import credit_balance, debit_balance
+from apps.users.models import PhoneVerificationCode
+from apps.users.serializers import UserProfileSerializer
+from apps.users.services import get_or_create_user_by_phone
+from apps.wallet.models import ReferralCommission
+
+from .models import Cottage, Booking, Review, BlockedDate, Favorite
 from .serializers import (
     CottageSerializer, CottageListSerializer, BookingSerializer,
-    BookingCreateSerializer, PriceCalculationSerializer, ReviewSerializer
+    BookingCreateSerializer, PriceCalculationSerializer, ReviewSerializer,
+    ACTIVE_BOOKING_STATUSES,
 )
+from .services import calculate_booking_price, find_referrer
+
+CALENDAR_HORIZON_DAYS = 548
+
+REFERRAL_BOOKING_COMMISSION_RATE = 0.15
 
 
 # COTTAGES
@@ -32,6 +46,37 @@ def cottage_detail(request, pk):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def cottage_calendar(request, pk):
+    cottage = get_object_or_404(Cottage, pk=pk, is_active=True)
+    today = timezone.now().date()
+    horizon = today + timedelta(days=CALENDAR_HORIZON_DAYS)
+
+    occupied = set()
+
+    bookings = Booking.objects.filter(
+        cottage=cottage,
+        status__in=ACTIVE_BOOKING_STATUSES,
+        check_out__gte=today,
+        check_in__lte=horizon,
+    )
+    for booking in bookings:
+        day = max(booking.check_in, today)
+        while day < booking.check_out and day <= horizon:
+            occupied.add(day.isoformat())
+            day += timedelta(days=1)
+
+    blocks = BlockedDate.objects.filter(cottage=cottage, end_date__gte=today, start_date__lte=horizon)
+    for block in blocks:
+        day = max(block.start_date, today)
+        while day <= block.end_date and day <= horizon:
+            occupied.add(day.isoformat())
+            day += timedelta(days=1)
+
+    return Response({'occupied_dates': sorted(occupied)})
+
+
 # PRICE CALCULATOR
 
 @api_view(['POST'])
@@ -44,36 +89,15 @@ def calculate_price(request):
     data = serializer.validated_data
     cottage = get_object_or_404(Cottage, pk=data['cottage_id'], is_active=True)
 
-    check_in = data['check_in']
-    check_out = data['check_out']
-    guests = data['guests']
-    promo_code = data.get('promo_code', '')
+    try:
+        result = calculate_booking_price(
+            cottage, data['check_in'], data['check_out'], data['guests'], data.get('promo_code', ''),
+            user=request.user,
+        )
+    except ValueError as err:
+        return Response({'error': str(err)}, status=400)
 
-    if check_out <= check_in:
-        return Response({'error': 'Дата выезда должна быть позже даты заезда'}, status=400)
-
-    nights = (check_out - check_in).days
-    total = float(cottage.price_per_night) * nights * guests
-
-    # Промокоды
-    discount = 0
-    if promo_code.upper() == 'PIKNIK10':
-        discount = total * 0.10
-    elif promo_code.upper() == 'WELCOME':
-        discount = total * 0.05
-
-    final_price = total - discount
-
-    return Response({
-        'cottage_id': cottage.id,
-        'cottage_name': cottage.name,
-        'price_per_night': float(cottage.price_per_night),
-        'nights': nights,
-        'guests': guests,
-        'subtotal': round(total, 2),
-        'discount': round(discount, 2),
-        'total_price': round(final_price, 2),
-    })
+    return Response(result)
 
 
 # BOOKINGS
@@ -87,9 +111,9 @@ def booking_list(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def booking_create(request):
-    serializer = BookingCreateSerializer(data=request.data)
+    serializer = BookingCreateSerializer(data=request.data, context={'request': request})
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -98,6 +122,21 @@ def booking_create(request):
     check_in = data['check_in']
     check_out = data['check_out']
     guests = data['guests']
+
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        phone_number = data['phone_number']
+        verification = PhoneVerificationCode.objects.filter(
+            phone_number=phone_number, code=data['verification_code'],
+            is_used=False, expires_at__gt=timezone.now(),
+        ).first()
+        if not verification:
+            return Response({'error': 'Неверный или истёкший код подтверждения'}, status=400)
+        verification.is_used = True
+        verification.save(update_fields=['is_used'])
+        user, _ = get_or_create_user_by_phone(phone_number)
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
     # Проверка пересечения дат
     overlapping = Booking.objects.filter(
@@ -110,43 +149,91 @@ def booking_create(request):
     if overlapping:
         return Response({'error': 'Эти даты уже заняты'}, status=status.HTTP_400_BAD_REQUEST)
 
+    blocked = BlockedDate.objects.filter(
+        cottage=cottage,
+        start_date__lt=check_out,
+        end_date__gte=check_in,
+    ).exists()
+
+    if blocked:
+        return Response({'error': 'Эти даты закрыты администрацией'}, status=status.HTTP_400_BAD_REQUEST)
+
     if guests > cottage.max_guests:
         return Response({'error': f'Максимум гостей: {cottage.max_guests}'}, status=400)
 
-    nights = (check_out - check_in).days
-    total = float(cottage.price_per_night) * nights * guests
-
     promo_code = data.get('promo_code', '')
-    discount = 0
-    if promo_code.upper() == 'PIKNIK10':
-        discount = total * 0.10
-    elif promo_code.upper() == 'WELCOME':
-        discount = total * 0.05
+    try:
+        price = calculate_booking_price(cottage, check_in, check_out, guests, promo_code, user=user)
+    except ValueError as err:
+        return Response({'error': str(err)}, status=400)
+
+    if not user.referred_by:
+        referrer = find_referrer(promo_code)
+        if referrer and referrer.pk != user.pk:
+            user.referred_by = referrer
+            user.save(update_fields=['referred_by'])
+
+    total_price = price['total_price']
+    balance_amount_used = min(float(data.get('balance_amount_used') or 0), float(user.balance), total_price)
 
     booking = Booking.objects.create(
-        user=request.user,
+        user=user,
         cottage=cottage,
         check_in=check_in,
         check_out=check_out,
         guests=guests,
-        total_price=round(total - discount, 2),
+        total_price=total_price,
         promo_code=promo_code,
         notes=data.get('notes', ''),
-        status='pending',
+        status='paid',
     )
 
-    # Отправка email
+    if balance_amount_used > 0:
+        debit_balance(
+            user, balance_amount_used, 'booking_payment_from_balance',
+            description=f'Оплата брони №{booking.id} с баланса',
+            related_object_type='booking', related_object_id=booking.id,
+        )
+
+    if user.referred_by:
+        commission_amount = round(total_price * REFERRAL_BOOKING_COMMISSION_RATE, 2)
+        ReferralCommission.objects.create(
+            referrer=user.referred_by,
+            referred_user=user,
+            source_type='booking_payment',
+            source_object_id=booking.id,
+            base_amount=total_price,
+            commission_rate=REFERRAL_BOOKING_COMMISSION_RATE,
+            commission_amount=commission_amount,
+        )
+        credit_balance(
+            user.referred_by, commission_amount, 'referral_booking_bonus',
+            description=f'Реферальный бонус за бронь №{booking.id}',
+            related_object_type='booking', related_object_id=booking.id,
+        )
+
+    # Отправка email клиенту
     send_mail(
         subject=f'Подтверждение бронирования — {cottage.name}',
-        message=f'''Здравствуйте, {request.user.first_name}!\n\nВаше бронирование подтверждено:\n\nКоттедж: {cottage.name} (Домик №{cottage.number})\nДаты: {check_in} — {check_out}\nГостей: {guests}\nНочей: {nights}\nИтого: {booking.total_price} Kč\n\nСтатус: Ожидает оплаты\n\nС уважением,\nКоманда Пикник Эко-парк''',
+        message=f'''Здравствуйте, {user.first_name}!\n\nВаше бронирование подтверждено:\n\nКоттедж: {cottage.name} (Домик №{cottage.number})\nДаты: {check_in} — {check_out}\nГостей: {guests}\nНочей: {price['nights']}\nИтого: {booking.total_price} Kč\n\nСтатус: Оплачено\n\nС уважением,\nКоманда Пикник Эко-парк''',
         from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[request.user.email],
+        recipient_list=[user.email],
+        fail_silently=True,
+    )
+
+    # Уведомление администратору о новой брони
+    send_mail(
+        subject=f'Новое бронирование — Домик №{cottage.number} ({cottage.name})',
+        message=f'''Новое бронирование на сайте:\n\nКоттедж: {cottage.name} (Домик №{cottage.number})\nКлиент: {user.first_name} {user.last_name} ({user.email}, {user.phone_number})\nДаты: {check_in} — {check_out}\nГостей: {guests}\nНочей: {price['nights']}\nИтого: {booking.total_price} Kč\nПромокод: {promo_code or "—"}\nНомер брони: {booking.id}''',
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[settings.CONTACT_EMAIL],
         fail_silently=True,
     )
 
     return Response({
         'message': 'Бронирование создано',
-        'booking': BookingSerializer(booking).data
+        'booking': BookingSerializer(booking).data,
+        'user': UserProfileSerializer(user).data,
     }, status=status.HTTP_201_CREATED)
 
 
@@ -174,7 +261,7 @@ def booking_cancel(request, pk):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def review_list(request, cottage_id):
-    reviews = Review.objects.filter(booking__cottage_id=cottage_id)
+    reviews = Review.objects.filter(cottage_id=cottage_id)
     serializer = ReviewSerializer(reviews, many=True)
     return Response(serializer.data)
 
@@ -184,9 +271,34 @@ def review_list(request, cottage_id):
 def review_create(request):
     serializer = ReviewSerializer(data=request.data)
     if serializer.is_valid():
+        cottage = serializer.validated_data['cottage']
+        if Review.objects.filter(cottage=cottage, user=request.user).exists():
+            return Response({'error': 'Вы уже оставили отзыв для этого домика'}, status=status.HTTP_400_BAD_REQUEST)
         serializer.save(user=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# FAVORITES
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def favorite_list(request):
+    cottage_ids = list(Favorite.objects.filter(user=request.user).values_list('cottage_id', flat=True))
+    return Response(cottage_ids)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def favorite_toggle(request):
+    cottage_id = request.data.get('cottage')
+    cottage = get_object_or_404(Cottage, pk=cottage_id)
+    favorite = Favorite.objects.filter(user=request.user, cottage=cottage).first()
+    if favorite:
+        favorite.delete()
+        return Response({'favorited': False})
+    Favorite.objects.create(user=request.user, cottage=cottage)
+    return Response({'favorited': True})
 
 
 # WEATHER
@@ -195,8 +307,8 @@ def review_create(request):
 @permission_classes([AllowAny])
 def weather(request):
     import requests
-    lat = request.GET.get('lat', 55.7558)
-    lon = request.GET.get('lon', 37.6173)
+    lat = request.GET.get('lat', 41.622706)
+    lon = request.GET.get('lon', 42.308329)
     try:
         url = f'https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true&timezone=Europe/Moscow'
         resp = requests.get(url, timeout=5)

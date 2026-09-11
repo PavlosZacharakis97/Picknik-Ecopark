@@ -1,33 +1,70 @@
+from django.utils import timezone
 from rest_framework import serializers
-from .models import Cottage, Booking, Review
+from .models import Cottage, CottageImage, Booking, Review
+
+ACTIVE_BOOKING_STATUSES = ['pending', 'confirmed', 'paid']
 
 
-class CottageSerializer(serializers.ModelSerializer):
+class CottageImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CottageImage
+        fields = ['id', 'image', 'order']
+
+
+class OccupiedUntilMixin(serializers.Serializer):
+    occupied_until = serializers.SerializerMethodField()
+
+    def get_occupied_until(self, obj):
+        booking = obj.bookings.filter(
+            status__in=ACTIVE_BOOKING_STATUSES,
+            check_out__gte=timezone.now().date(),
+        ).order_by('check_out').first()
+        return booking.check_out if booking else None
+
+
+class CottageSerializer(OccupiedUntilMixin, serializers.ModelSerializer):
+    images = CottageImageSerializer(many=True, read_only=True)
+
     class Meta:
         model = Cottage
         fields = '__all__'
 
 
-class CottageListSerializer(serializers.ModelSerializer):
+class CottageListSerializer(OccupiedUntilMixin, serializers.ModelSerializer):
+    images = CottageImageSerializer(many=True, read_only=True)
+
     class Meta:
         model = Cottage
-        fields = ['id', 'number', 'name', 'cottage_type', 'price_per_night', 'max_guests', 'image', 'is_active', 'latitude', 'longitude']
+        fields = ['id', 'number', 'name', 'name_en', 'name_cs', 'cottage_type', 'price_per_night', 'max_guests', 'bedrooms', 'image', 'images', 'is_active', 'latitude', 'longitude', 'occupied_until']
 
 
 class BookingSerializer(serializers.ModelSerializer):
     cottage_name = serializers.CharField(source='cottage.name', read_only=True)
+    cottage_name_en = serializers.CharField(source='cottage.name_en', read_only=True)
+    cottage_name_cs = serializers.CharField(source='cottage.name_cs', read_only=True)
     cottage_number = serializers.IntegerField(source='cottage.number', read_only=True)
 
     class Meta:
         model = Booking
-        fields = ['id', 'user', 'cottage', 'cottage_name', 'cottage_number', 'check_in', 'check_out', 'guests', 'total_price', 'status', 'promo_code', 'notes', 'created_at']
+        fields = ['id', 'user', 'cottage', 'cottage_name', 'cottage_name_en', 'cottage_name_cs', 'cottage_number', 'check_in', 'check_out', 'guests', 'total_price', 'status', 'promo_code', 'notes', 'created_at']
         read_only_fields = ['user', 'total_price', 'status']
 
 
 class BookingCreateSerializer(serializers.ModelSerializer):
+    phone_number = serializers.CharField(required=False, allow_blank=True)
+    verification_code = serializers.CharField(required=False, allow_blank=True)
+    balance_amount_used = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, default=0)
+
     class Meta:
         model = Booking
-        fields = ['cottage', 'check_in', 'check_out', 'guests', 'promo_code', 'notes']
+        fields = ['cottage', 'check_in', 'check_out', 'guests', 'promo_code', 'notes', 'phone_number', 'verification_code', 'balance_amount_used']
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        is_authenticated = bool(request and request.user and request.user.is_authenticated)
+        if not is_authenticated and not (attrs.get('phone_number') and attrs.get('verification_code')):
+            raise serializers.ValidationError('Для бронирования без входа укажите телефон и код подтверждения')
+        return attrs
 
 
 class PriceCalculationSerializer(serializers.Serializer):
@@ -43,5 +80,10 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ['id', 'booking', 'user', 'user_name', 'rating', 'comment', 'created_at']
+        fields = ['id', 'cottage', 'booking', 'user', 'user_name', 'rating', 'comment', 'created_at']
         read_only_fields = ['user']
+
+    def validate_rating(self, value):
+        if not 1 <= value <= 5:
+            raise serializers.ValidationError('Оценка должна быть от 1 до 5')
+        return value

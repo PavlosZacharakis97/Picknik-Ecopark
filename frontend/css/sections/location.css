@@ -1,0 +1,177 @@
+.location-section {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 40px;
+    align-items: center;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 40px;
+    margin-bottom: 64px;
+}
+
+.location-text p {
+    color: var(--text-light);
+    line-height: 1.7;
+    margin: 12px 0 24px;
+}
+
+.location-map {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    line-height: 0;
+}
+
+.location-map iframe {
+    width: 100%;
+    height: 360px;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .location-section {
+        grid-template-columns: 1fr;
+        padding: 24px;
+        gap: 24px;
+    }
+
+    .location-map iframe {
+        height: 260px;
+    }
+}
+
+.forest-footer {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding: 100px 0 80px;
+}
+
+.forest-footer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url('/static/assets/images/hero-forest-bg.png') 50% 40% / cover no-repeat;
+    transform: scale(1);
+    animation: forest-drift 43.2s ease-in-out infinite alternate;
+}
+
+@keyframes forest-drift {
+    from { background-position: 42% 40%; transform: scale(1); }
+    to { background-position: 58% 40%; transform: scale(1.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .forest-footer::after {
+        animation: none;
+    }
+}
+
+.forest-footer::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 220px;
+    background: linear-gradient(to top, rgba(245, 245, 240, 0) 0%, var(--bg) 100%);
+    pointer-events: none;
+}
+
+.contact-section {
+    position: relative;
+    z-index: 1;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 48px;
+    text-align: center;
+}
+
+.contact-intro p {
+    color: var(--text-light);
+    max-width: 480px;
+    margin: 10px auto 0;
+    line-height: 1.6;
+}
+
+.contact-form {
+    max-width: 460px;
+    margin: 32px auto 0;
+    text-align: left;
+}
+
+.contact-field {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.contact-field-icon {
+    position: absolute;
+    left: 16px;
+    top: 18px;
+    display: flex;
+    color: var(--text-light);
+    line-height: 1;
+    pointer-events: none;
+}
+
+.contact-field input,
+.contact-field textarea {
+    width: 100%;
+    padding: 14px 16px 14px 44px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-family: inherit;
+    background: var(--bg);
+    color: var(--text);
+    transition: var(--transition);
+}
+
+.contact-field textarea {
+    resize: none;
+    min-height: 100px;
+}
+
+.contact-field input::placeholder,
+.contact-field textarea::placeholder {
+    color: var(--text-light);
+    opacity: 0.7;
+}
+
+.contact-field input:focus,
+.contact-field textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--bg-card);
+    box-shadow: 0 0 0 4px rgba(122, 158, 126, 0.15);
+}
+
+#contact-feedback:empty {
+    display: none;
+}
+
+#contact-feedback {
+    margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+    .forest-footer {
+        padding: 64px 0 48px;
+    }
+
+    .forest-footer::before {
+        height: 140px;
+    }
+
+    .contact-section {
+        padding: 28px 20px;
+    }
+}

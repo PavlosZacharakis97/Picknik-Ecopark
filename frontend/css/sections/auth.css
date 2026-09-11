@@ -6,6 +6,38 @@
     padding: 32px 16px;
 }
 
+.auth-section--register,
+.auth-section--login {
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-section--register {
+    min-height: 100vh;
+}
+
+.auth-section--register::before,
+.auth-section--login::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url('/static/assets/images/background_na_registraciu.jpeg') 50% top / cover no-repeat;
+    animation: auth-forest-drift 43.2s ease-in-out infinite alternate;
+}
+
+@keyframes auth-forest-drift {
+    from { background-position: 42% top; transform: scale(1); }
+    to { background-position: 58% top; transform: scale(1.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-section--register::before,
+    .auth-section--login::before {
+        animation: none;
+    }
+}
+
 .auth-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -15,16 +47,39 @@
     width: 100%;
 }
 
+.auth-layout--register {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    max-width: 560px;
+}
+
+.auth-layout--register .form-container {
+    width: 100%;
+    max-width: 560px;
+}
+
 .auth-image {
     width: 100%;
     height: 400px;
     background: linear-gradient(135deg, var(--primary-light), var(--primary));
     border-radius: var(--radius);
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-size: 80px;
+}
+
+.auth-image.has-illustration {
+    background: var(--bg);
+    padding: 0;
+}
+
+.auth-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .auth-toggle {

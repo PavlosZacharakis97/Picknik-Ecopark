@@ -11,8 +11,12 @@ class Cottage(models.Model):
     ]
 
     name = models.CharField(max_length=100, verbose_name=_('Название'))
+    name_en = models.CharField(max_length=100, blank=True, verbose_name=_('Название (EN)'))
+    name_cs = models.CharField(max_length=100, blank=True, verbose_name=_('Название (CS)'))
     number = models.PositiveIntegerField(unique=True, verbose_name=_('Номер домика'))
     description = models.TextField(blank=True, verbose_name=_('Описание'))
+    description_en = models.TextField(blank=True, verbose_name=_('Описание (EN)'))
+    description_cs = models.TextField(blank=True, verbose_name=_('Описание (CS)'))
     cottage_type = models.CharField(max_length=20, choices=COTTAGE_TYPES, default='standard', verbose_name=_('Тип'))
     price_per_night = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Цена за ночь'))
     max_guests = models.PositiveIntegerField(default=4, verbose_name=_('Макс. гостей'))
@@ -23,8 +27,8 @@ class Cottage(models.Model):
     has_bbq = models.BooleanField(default=False, verbose_name=_('Мангал'))
     image = models.ImageField(upload_to='cottages/', blank=True, verbose_name=_('Фото'))
     is_active = models.BooleanField(default=True, verbose_name=_('Активен'))
-    latitude = models.FloatField(default=55.7558, verbose_name=_('Широта'))
-    longitude = models.FloatField(default=37.6173, verbose_name=_('Долгота'))
+    latitude = models.FloatField(default=41.622706, verbose_name=_('Широта'))
+    longitude = models.FloatField(default=42.308329, verbose_name=_('Долгота'))
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -34,6 +38,20 @@ class Cottage(models.Model):
 
     def __str__(self):
         return f'Домик №{self.number} — {self.name}'
+
+
+class CottageImage(models.Model):
+    cottage = models.ForeignKey(Cottage, on_delete=models.CASCADE, related_name='images', verbose_name=_('Коттедж'))
+    image = models.ImageField(upload_to='cottages/gallery/', verbose_name=_('Фото'))
+    order = models.PositiveIntegerField(default=0, verbose_name=_('Порядок'))
+
+    class Meta:
+        verbose_name = _('Фото коттеджа')
+        verbose_name_plural = _('Фотографии коттеджа')
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        return f'Фото для {self.cottage}'
 
 
 class Booking(models.Model):
@@ -66,8 +84,25 @@ class Booking(models.Model):
         return f'Бронь #{self.id} — {self.cottage.name} ({self.check_in} - {self.check_out})'
 
 
+class BlockedDate(models.Model):
+    cottage = models.ForeignKey(Cottage, on_delete=models.CASCADE, related_name='blocked_dates', verbose_name=_('Коттедж'))
+    start_date = models.DateField(verbose_name=_('С'))
+    end_date = models.DateField(verbose_name=_('По'))
+    reason = models.CharField(max_length=255, blank=True, verbose_name=_('Причина'))
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Закрытая дата')
+        verbose_name_plural = _('Закрытые даты')
+        ordering = ['start_date']
+
+    def __str__(self):
+        return f'{self.cottage.name}: {self.start_date} — {self.end_date}'
+
+
 class Review(models.Model):
-    booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name='review', verbose_name=_('Бронирование'))
+    cottage = models.ForeignKey(Cottage, on_delete=models.CASCADE, related_name='reviews', verbose_name=_('Коттедж'))
+    booking = models.ForeignKey(Booking, on_delete=models.SET_NULL, null=True, blank=True, related_name='reviews', verbose_name=_('Бронирование'))
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reviews', verbose_name=_('Пользователь'))
     rating = models.PositiveSmallIntegerField(default=5, verbose_name=_('Оценка'))
     comment = models.TextField(blank=True, verbose_name=_('Комментарий'))
@@ -76,6 +111,22 @@ class Review(models.Model):
     class Meta:
         verbose_name = _('Отзыв')
         verbose_name_plural = _('Отзывы')
+        ordering = ['-created_at']
+        unique_together = [['cottage', 'user']]
 
     def __str__(self):
         return f'Отзыв {self.rating}★ — {self.user.first_name}'
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='favorites', verbose_name=_('Пользователь'))
+    cottage = models.ForeignKey(Cottage, on_delete=models.CASCADE, related_name='favorited_by', verbose_name=_('Коттедж'))
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Избранное')
+        verbose_name_plural = _('Избранное')
+        unique_together = [['user', 'cottage']]
+
+    def __str__(self):
+        return f'{self.user} ♥ {self.cottage}'
