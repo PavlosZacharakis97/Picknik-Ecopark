@@ -20,6 +20,10 @@ urlpatterns = [
     path('cottages/<int:cottage_id>/reviews/', views.review_list, name='review-list'),
     path('reviews/create/', views.review_create, name='review-create'),
     
+    # Favorites
+    path('favorites/', views.favorite_list, name='favorite-list'),
+    path('favorites/toggle/', views.favorite_toggle, name='favorite-toggle'),
+
     # Weather
     path('weather/', views.weather, name='weather'),
 ]

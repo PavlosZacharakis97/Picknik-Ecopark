@@ -1,5 +1,6 @@
 async function renderFavorites() {
     try {
+        await ensureFavoritesLoaded();
         const favoriteIds = getFavorites();
 
         if (favoriteIds.length === 0) {

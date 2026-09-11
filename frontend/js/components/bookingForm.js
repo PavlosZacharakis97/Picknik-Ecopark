@@ -110,12 +110,16 @@ function selectGuestsOption(n) {
   calcPrice(guestsPickerState.cottageId, guestsPickerState.pricePerNight);
 }
 
-document.addEventListener('click', (event) => {
+function closeGuestsPicker() {
   if (!guestsPickerState || !guestsPickerState.open) return;
-  if (event.target.closest('#guests-picker')) return;
   guestsPickerState.open = false;
   const el = document.getElementById('guests-picker');
   if (el) el.innerHTML = guestsPickerInnerHtml();
+}
+
+document.addEventListener('click', (event) => {
+  if (event.target.closest('#guests-picker')) return;
+  closeGuestsPicker();
 });
 
 async function calcPrice(cottageId, pricePerNight) {

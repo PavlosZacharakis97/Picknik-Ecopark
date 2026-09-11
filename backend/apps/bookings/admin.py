@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cottage, CottageImage, Booking, Review, BlockedDate
+from .models import Cottage, CottageImage, Booking, Review, BlockedDate, Favorite
 
 
 class BlockedDateInline(admin.TabularInline):
@@ -43,3 +43,10 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display = ['cottage', 'user', 'rating', 'created_at']
     list_filter = ['rating', 'cottage', 'created_at']
     search_fields = ['user__email', 'cottage__name', 'comment']
+
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ['user', 'cottage', 'created_at']
+    list_filter = ['cottage']
+    search_fields = ['user__email', 'cottage__name']

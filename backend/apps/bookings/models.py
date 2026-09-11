@@ -27,8 +27,8 @@ class Cottage(models.Model):
     has_bbq = models.BooleanField(default=False, verbose_name=_('Мангал'))
     image = models.ImageField(upload_to='cottages/', blank=True, verbose_name=_('Фото'))
     is_active = models.BooleanField(default=True, verbose_name=_('Активен'))
-    latitude = models.FloatField(default=55.7558, verbose_name=_('Широта'))
-    longitude = models.FloatField(default=37.6173, verbose_name=_('Долгота'))
+    latitude = models.FloatField(default=41.622706, verbose_name=_('Широта'))
+    longitude = models.FloatField(default=42.308329, verbose_name=_('Долгота'))
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -116,3 +116,17 @@ class Review(models.Model):
 
     def __str__(self):
         return f'Отзыв {self.rating}★ — {self.user.first_name}'
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='favorites', verbose_name=_('Пользователь'))
+    cottage = models.ForeignKey(Cottage, on_delete=models.CASCADE, related_name='favorited_by', verbose_name=_('Коттедж'))
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Избранное')
+        verbose_name_plural = _('Избранное')
+        unique_together = [['user', 'cottage']]
+
+    def __str__(self):
+        return f'{self.user} ♥ {self.cottage}'

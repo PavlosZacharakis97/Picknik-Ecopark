@@ -26,7 +26,6 @@ cd backend
 python3 -m venv venv
 
 ./venv/bin/pip install -r requirements.txt
-./venv/bin/pip install requests   # used by the weather endpoint; not yet in requirements.txt
 
 ./venv/bin/python manage.py migrate
 ./venv/bin/python manage.py runserver 127.0.0.1:8000
@@ -65,8 +64,6 @@ URL ends up broken and the page fails to load properly.
 
 ## Troubleshooting
 
-- `ModuleNotFoundError: No module named 'requests'` — install it manually
-  (see above); it's missing from `backend/requirements.txt`.
 - Backend can't connect to the database — check the docker-compose port
   mismatch noted above, or that a local Postgres instance is running with
   the matching db/user/password.

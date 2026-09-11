@@ -4,7 +4,8 @@ async function renderHome() {
     try {
         const [cottages, weather] = await Promise.all([
             getCottages(),
-            getWeather().catch(() => null)
+            getWeather(41.622706, 42.308329).catch(() => null),
+            ensureFavoritesLoaded()
         ]);
         cachedCottages = cottages;
 

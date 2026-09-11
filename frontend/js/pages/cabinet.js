@@ -311,13 +311,34 @@ async function renderCabinetBalance() {
         <div style="position:relative;z-index:1;">
             <h2 style="margin-bottom:8px;">${t('balance_title')}</h2>
             <div style="font-family:var(--font-heading);font-size:48px;font-weight:700;color:var(--primary);margin-bottom:16px;">${balance.toLocaleString()} Kč</div>
-            <p style="color:var(--text-light);max-width:420px;">${t('balance_note')}</p>
+            <p style="color:var(--text-light);max-width:420px;margin-bottom:8px;">${t('balance_note')}</p>
+            <p style="color:var(--text-light);max-width:420px;margin-bottom:24px;font-size:13px;">${t('balance_notice')}</p>
+
+            <form onsubmit="handleWithdrawalSubmit(event)" novalidate style="max-width:360px;">
+                <div class="form-group">
+                    <label>${t('withdrawal_method_label')}</label>
+                    <select name="method">
+                        <option value="visa" ${profile.payout_method === 'visa' ? 'selected' : ''}>Visa</option>
+                        <option value="mastercard" ${profile.payout_method === 'mastercard' ? 'selected' : ''}>Mastercard</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>${t('card_last4_label')}</label>
+                    <input type="text" name="card_last4" required minlength="4" maxlength="4" pattern="/^\\d{4}$/" inputmode="numeric" value="${profile.payout_card_last4 || ''}">
+                </div>
+                <div class="form-group">
+                    <label>${t('withdrawal_amount_label')}</label>
+                    <input type="number" name="amount" min="500" max="${balance}" step="0.01" required placeholder="0.00">
+                </div>
+                <button type="submit" class="btn">${t('confirm_withdrawal_btn')}</button>
+            </form>
         </div>
     `;
 }
 
 async function handleWithdrawalSubmit(e) {
   e.preventDefault();
+  if (!validateForm(e.target)) return;
   const data = Object.fromEntries(new FormData(e.target));
   try {
     await createWithdrawal(data);

@@ -48,14 +48,12 @@ function getCottageTypeName(type) {
   return types[type] || type;
 }
 
-function toggleFav(event, id) {
+async function toggleFav(event, id) {
   event.preventDefault();
   event.stopPropagation();
 
-  toggleFavorite(id);
-
   const btn = event.currentTarget;
-  const isFav = isFavorite(id);
+  const isFav = await toggleFavorite(id);
   btn.classList.toggle('active', isFav);
   btn.innerHTML = iconHeart(isFav);
 

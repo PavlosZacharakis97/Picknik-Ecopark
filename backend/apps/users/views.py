@@ -159,9 +159,11 @@ def phone_verify_code(request):
 
     phone_number = serializer.validated_data['phone_number']
     code = serializer.validated_data['code']
-    is_valid = PhoneVerificationCode.objects.filter(
+    verification = PhoneVerificationCode.objects.filter(
         phone_number=phone_number, code=code, is_used=False, expires_at__gt=timezone.now(),
-    ).exists()
-    if not is_valid:
+    ).first()
+    if not verification:
         return Response({'error': 'Неверный или истёкший код'}, status=status.HTTP_400_BAD_REQUEST)
+    verification.is_used = True
+    verification.save(update_fields=['is_used'])
     return Response({'verified': True})

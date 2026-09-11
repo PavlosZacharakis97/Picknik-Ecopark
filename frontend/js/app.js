@@ -43,6 +43,7 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         closeNavMenu();
         if (typeof closePasswordModal === 'function') closePasswordModal();
+        if (typeof closeGuestsPicker === 'function') closeGuestsPicker();
     }
 });
 

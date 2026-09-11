@@ -83,6 +83,14 @@ function createReview(data) {
     return apiRequest('/reviews/create/', { method: 'POST', body: JSON.stringify(data) });
 }
 
+function getFavoritesApi() {
+    return apiRequest('/favorites/');
+}
+
+function toggleFavoriteApi(cottageId) {
+    return apiRequest('/favorites/toggle/', { method: 'POST', body: JSON.stringify({ cottage: cottageId }) });
+}
+
 // апи брони
 function calculatePrice(data) {
     return apiRequest('/bookings/calculate-price/', { method: 'POST', body: JSON.stringify(data) });
@@ -101,7 +109,7 @@ function cancelBooking(id) {
 }
 
 // апи погоды
-function getWeather(lat = 55.7558, lon = 37.6173) {
+function getWeather(lat = 41.622706, lon = 42.308329) {
     return apiRequest(`/weather/?lat=${lat}&lon=${lon}`);
 }
 

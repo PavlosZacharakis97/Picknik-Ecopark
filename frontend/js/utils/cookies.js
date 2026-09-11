@@ -41,7 +41,9 @@ function setLanguage(lang) {
     setCookie('django_language', lang, 365);
     setStorage('language', lang);
     document.documentElement.lang = lang;
-    window.location.reload();
+    if (typeof Pristine !== 'undefined') Pristine.setLocale(lang);
+    if (typeof applyStaticTranslations === 'function') applyStaticTranslations();
+    if (typeof render === 'function') render();
 }
 
 // сохранение бронирования в черновике
@@ -115,9 +117,34 @@ function isNotificationRead(notificationId) {
     return read.includes(notificationId);
 }
 
-// wishlist
+// wishlist — у гостя живёт в localStorage, у авторизованного синхронизируется с сервером
 
-function toggleFavorite(cottageId) {
+let favoritesCache = null; // Set с id коттеджей, только для залогиненного юзера
+
+async function ensureFavoritesLoaded() {
+    if (!getStorage('user') || favoritesCache) return;
+    try {
+        const ids = await getFavoritesApi();
+        favoritesCache = new Set(ids);
+    } catch {
+        favoritesCache = new Set();
+    }
+}
+
+async function toggleFavorite(cottageId) {
+    if (getStorage('user')) {
+        await ensureFavoritesLoaded();
+        try {
+            const result = await toggleFavoriteApi(cottageId);
+            if (result.favorited) favoritesCache.add(cottageId);
+            else favoritesCache.delete(cottageId);
+            return result.favorited;
+        } catch (err) {
+            toastError(err.message);
+            return favoritesCache.has(cottageId);
+        }
+    }
+
     let favorites = getStorage('favorite_cottages', []);
     if (favorites.includes(cottageId)) {
         favorites = favorites.filter(id => id !== cottageId);
@@ -129,9 +156,15 @@ function toggleFavorite(cottageId) {
 }
 
 function getFavorites() {
+    if (getStorage('user')) {
+        return favoritesCache ? Array.from(favoritesCache) : [];
+    }
     return getStorage('favorite_cottages', []);
 }
 
 function isFavorite(cottageId) {
+    if (getStorage('user')) {
+        return favoritesCache ? favoritesCache.has(cottageId) : false;
+    }
     return getStorage('favorite_cottages', []).includes(cottageId);
 }

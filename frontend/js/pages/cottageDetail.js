@@ -2,6 +2,7 @@ async function renderCottageDetail(id) {
     try {
         const cottage = await getCottage(id);
         addRecentCottage(cottage.id);
+        await ensureFavoritesLoaded();
         await loadAvailabilityCalendar(cottage.id);
         const reviews = await loadCottageReviews(cottage.id);
         const name = getCottageName(cottage);
@@ -62,10 +63,9 @@ async function renderCottageDetail(id) {
     }
 }
 
-function toggleFavoriteButton(event, id) {
+async function toggleFavoriteButton(event, id) {
     event.preventDefault();
-    toggleFavorite(id);
     const btn = event.currentTarget;
-    const fav = isFavorite(id);
+    const fav = await toggleFavorite(id);
     btn.innerHTML = `${iconHeart(fav)} ${fav ? t('fav_added') : t('fav_add')}`;
 }

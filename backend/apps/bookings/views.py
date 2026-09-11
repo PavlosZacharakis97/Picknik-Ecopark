@@ -15,7 +15,7 @@ from apps.users.serializers import UserProfileSerializer
 from apps.users.services import get_or_create_user_by_phone
 from apps.wallet.models import ReferralCommission
 
-from .models import Cottage, Booking, Review, BlockedDate
+from .models import Cottage, Booking, Review, BlockedDate, Favorite
 from .serializers import (
     CottageSerializer, CottageListSerializer, BookingSerializer,
     BookingCreateSerializer, PriceCalculationSerializer, ReviewSerializer,
@@ -279,14 +279,36 @@ def review_create(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# FAVORITES
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def favorite_list(request):
+    cottage_ids = list(Favorite.objects.filter(user=request.user).values_list('cottage_id', flat=True))
+    return Response(cottage_ids)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def favorite_toggle(request):
+    cottage_id = request.data.get('cottage')
+    cottage = get_object_or_404(Cottage, pk=cottage_id)
+    favorite = Favorite.objects.filter(user=request.user, cottage=cottage).first()
+    if favorite:
+        favorite.delete()
+        return Response({'favorited': False})
+    Favorite.objects.create(user=request.user, cottage=cottage)
+    return Response({'favorited': True})
+
+
 # WEATHER
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def weather(request):
     import requests
-    lat = request.GET.get('lat', 55.7558)
-    lon = request.GET.get('lon', 37.6173)
+    lat = request.GET.get('lat', 41.622706)
+    lon = request.GET.get('lon', 42.308329)
     try:
         url = f'https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true&timezone=Europe/Moscow'
         resp = requests.get(url, timeout=5)
