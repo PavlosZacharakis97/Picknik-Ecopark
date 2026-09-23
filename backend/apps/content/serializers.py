@@ -1,12 +1,6 @@
 from rest_framework import serializers
 
-from .models import Tip, ContactMessage
-
-
-class TipSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tip
-        fields = ['id', 'title', 'body', 'image', 'tags', 'order']
+from .models import ContactMessage
 
 
 class ContactMessageSerializer(serializers.ModelSerializer):

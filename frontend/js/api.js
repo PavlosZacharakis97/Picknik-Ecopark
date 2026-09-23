@@ -149,11 +149,6 @@ function getTaskSubmissions() {
     return apiRequest('/tasks/submissions/');
 }
 
-// апи советов
-function getTips() {
-    return apiRequest('/content/tips/');
-}
-
 function sendContactMessage(data) {
     return apiRequest('/content/contact/', { method: 'POST', body: JSON.stringify(data) });
 }

@@ -41,7 +41,7 @@ async function renderCabinet(section) {
 }
 
 async function renderCabinetProfile() {
-  const [profile, tips] = await Promise.all([authProfile(), getTips().catch(() => [])]);
+  const profile = await authProfile();
 
   return `
         <h2 style="margin-bottom:24px;">${t('profile_title')}</h2>
@@ -62,10 +62,6 @@ async function renderCabinetProfile() {
         </form>
 
         <button type="button" class="btn btn-outline" style="margin-top:24px;" onclick="openPasswordModal()">${t('change_password_btn')}</button>
-
-        <div style="margin-top:32px;">
-            ${tipsCarousel(tips)}
-        </div>
 
         <div class="modal-overlay hidden" id="password-modal-overlay" onclick="if(event.target===this) closePasswordModal();">
             <div class="modal">

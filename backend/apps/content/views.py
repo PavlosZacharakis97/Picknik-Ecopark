@@ -8,15 +8,7 @@ from django.core.mail import EmailMessage
 
 from apps.core.utils import too_many_requests
 
-from .models import Tip, ContactMessage
-from .serializers import TipSerializer, ContactMessageSerializer
-
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def tip_list(request):
-    tips = Tip.objects.filter(is_active=True)
-    return Response(TipSerializer(tips, many=True).data)
+from .serializers import ContactMessageSerializer
 
 
 @api_view(['POST'])
